@@ -1,4 +1,5 @@
 # eval-demo-openhands
+Demonstrate brownfield application of AI evals
 
 A private practice study of applying evals to a brownfield AI project. The study team's own evals run against a pinned, privately deployed copy of [OpenHands](https://github.com/OpenHands/OpenHands) (Agent Canvas). Nothing here is contributed upstream, and the OpenHands code is not part of this repository.
 
