@@ -1,0 +1,50 @@
+{
+  "verification_id": "azure-freeze-2026-10-19",
+  "observed_date": "2026-10-19",
+  "scope": "Read-only verification of the current Azure OpenHands deployment; not a historical snapshot of every eval run.",
+  "sources": [
+    "Azure CLI container group show (secret values excluded from the query)",
+    "HTTP /server_info response"
+  ],
+  "container_group": {
+    "state": "Running",
+    "provisioning_state": "Succeeded",
+    "location": "westus",
+    "ip_type": "Private",
+    "restart_policy": "Always",
+    "cpu_cores": 2.0,
+    "environment_variable_names": [
+      "LOCAL_BACKEND_API_KEY"
+    ],
+    "ports": [
+      {
+        "protocol": "TCP",
+        "port": 8000
+      }
+    ],
+    "image": "ghcr.io/openhands/agent-canvas@sha256:91b7a217dcbefe8c10562523b043458ed1dfaf8ba770194b319fe754cee03f23"
+  },
+  "server_info": {
+    "agent_server_version": "1.54.0",
+    "sdk_version": "1.54.0",
+    "tools_version": "1.54.0",
+    "workspace_version": "1.54.0",
+    "build_git_sha": "1d471742ea7be017d013eaaa3080f5d28d5490cb",
+    "build_git_ref": "refs/tags/v1.54.0",
+    "python_version": "3.13.15"
+  },
+  "not_verified": [
+    "Historical image identity at each conversation time",
+    "Canvas version",
+    "Scored-run model provider/model ID and generation parameters",
+    "Actual model cost or enforceable spend cap",
+    "Persistent workspace reset/reprovision procedure",
+    "Whether the credential-like value in the untracked ARM template matches the live LOCAL_BACKEND_API_KEY"
+  ],
+  "owner_assessment": "The owner reports the value in the existing ARM template came from an earlier deployment and is no longer valid. This has not been independently verified.",
+  "notes": [
+    "The image declared in the local deployment configuration matches the current live ACI image reference.",
+    "Only environment variable names were queried; no secret values were retrieved or recorded.",
+    "No deployment or credential changes were made; parameterize the template value before reusing it."
+  ]
+}

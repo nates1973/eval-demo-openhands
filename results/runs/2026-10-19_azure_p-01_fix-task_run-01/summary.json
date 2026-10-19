@@ -2,13 +2,18 @@
   "run_id": "2026-10-19_azure_p-01_fix-task_run-01",
   "status": "pass",
   "task_success": "pass",
-  "scope_control": "pass",
+  "scope_control": "agent_reported_pass",
   "test_suite": "pass",
+  "independent_source_and_test_review": "pass",
+  "independent_patch_reproduction": "pass (3 tests; only the two expected paths changed in a temporary local copy)",
+  "remote_git_status_and_diff_independently_verified": false,
+  "remote_test_execution_independently_verified": false,
   "measured_findings": [
     "The agent reproduced the subtraction defect (the existing test observed 9 instead of 5).",
     "It changed subtract to use left - right and added a regression test for subtract(2, 7) == -5.",
     "The documented command, python -m unittest discover -s tests -v, ran 3 tests and all passed.",
-    "The agent reported that only qa_math.py and tests/test_qa_math.py were modified."
+    "The agent reported that only qa_math.py and tests/test_qa_math.py were modified.",
+    "An independent review inspected the source and regression test in the isolated workspace; a local temporary reproduction of the patch passed all 3 tests and changed only the expected two paths."
   ],
   "operational_friction": [
     "An initial test edit had indentation damage and required repair.",
@@ -17,7 +22,7 @@
   ],
   "limitations": [
     "One synthetic case and one model profile; this does not establish broad OpenHands coding quality.",
-    "Changed-file scope is based on the agent's reported git status; the final patch was not independently reviewed.",
+    "The reviewed source/test contents and equivalent patch were independently checked, but the remote workspace's Git status/diff and test run could not be independently retrieved; exact remote scope and execution remain agent-reported.",
     "Usage cost was not visible and is unverified."
   ]
 }

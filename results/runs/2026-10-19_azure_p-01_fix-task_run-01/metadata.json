@@ -22,5 +22,8 @@
   "conversation_id": "36535720-718e-4c7a-b0df-02479d494373",
   "cost_usd": null,
   "cost_note": "Usage cost was not displayed; actual cost is unverified.",
-  "independent_diff_review": false
+  "independent_source_and_test_review": true,
+  "independent_patch_reproduction": "PASS: 3 tests in a temporary local copy; only qa_math.py and tests/test_qa_math.py changed",
+  "remote_git_status_and_diff_independently_verified": false,
+  "remote_test_execution_independently_verified": false
 }

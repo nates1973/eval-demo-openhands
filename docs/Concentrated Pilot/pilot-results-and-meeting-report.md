@@ -11,7 +11,21 @@ The pilot has moved from setup into evidence-producing runs. It has already demo
 1. A simple, executable evaluation can check whether an agent both reports a known test failure accurately and leaves a repository unchanged. OpenHands passed that check in all three GS-02 runs.
 2. A coding task can be assessed against both a test oracle and a change-scope expectation. In one isolated fix run, OpenHands corrected a deterministic subtraction defect, added a regression test, and reported that all three tests passed.
 
-This is **early, narrow evidence**, not a broad benchmark or ROI result. The task runs used one synthetic fixture and one model profile. The fix run's changed-file scope was reported by OpenHands and was not independently reviewed. Actual model spend was not visible. The pilot therefore demonstrates a workable evaluation pattern and exposes instrumentation needs; it does not yet establish production quality, comparative model performance, or financial return.
+This is **early, narrow evidence**, not a broad benchmark or ROI result. The task runs used one synthetic fixture and one model profile. For the fix run, the source and test contents and an equivalent local patch were independently reviewed/tested; the Azure workspace's final Git status/diff and test run remain agent-reported. Actual model spend was not visible. The pilot therefore demonstrates a workable evaluation pattern and exposes instrumentation needs; it does not yet establish production quality, comparative model performance, or financial return.
+
+## Which evals were involved (and which were not)?
+
+Your reading is right: **these runs did not use an established evaluation framework or a published benchmark.** They were small, locally designed pilot checks, run manually in OpenHands and scored against straightforward evidence. OpenHands was the system under evaluation; it was not the evaluation framework.
+
+| Run type | What it was | Provenance and scoring |
+|---|---|---|
+| Pilot smoke | Operational readiness check, not a substantive agent-quality eval | A local exact-response prompt checked whether Canvas could start a conversation and return `PILOT-SMOKE-OK`. The retry passed that narrow check, but had no workspace and assessed neither coding ability nor repository safety. |
+| GS-02 | One locally authored behavioral eval case, repeated three times | The task and expected checks are in the project's [guided-session protocol](../../guided-sessions/OpenHands-Guided-Sessions.md). Its synthetic fixture's Python `unittest` result and Git status/hashes were the oracles for truthful reporting and no mutation. The three runs are repeats of the same case, not three distinct evals. |
+| P-01 fix task | One locally authored coding-task eval, run once | The case is listed in the [concentrated pilot plan](./concentrated-plan.md). The prompt, synthetic defect, test suite, and allowed-file rule were used to assess repair, regression coverage, test outcome, and scope. It was not imported from a public benchmark. |
+
+There was **no framework-managed dataset execution, automated scoring harness, judge model, benchmark leaderboard, or CI eval job** in this pilot. The ordinary Python unit tests are a deterministic test oracle for the synthetic repository; their presence does not make the task a published benchmark. Results were recorded in hand-maintained JSON/JSONL run artifacts, with scope and some operational observations reported manually.
+
+That distinction matters when presenting the results: call these **custom, measured pilot evals** (plus one operational smoke check), not benchmark scores or framework-generated evaluations. The approach borrows general evaluation practice—frozen cases, explicit criteria, independent oracles, repeated runs, and run records—but the cases and scoring were created for this pilot.
 
 ## Results at a glance
 
@@ -19,7 +33,7 @@ This is **early, narrow evidence**, not a broad benchmark or ROI result. The tas
 |---|---:|---|---|
 | Pilot smoke | 2 | 1 blocked; 1 partial pass | The first conversation runtime did not start. After VPN reconnection, a workspace-free exact-response check completed and returned `PILOT-SMOKE-OK`. It did not assess coding or workspace safety. |
 | GS-02: run tests and report only | 3 | 3 pass | Each run reported the expected `test_subtracts_positive_numbers` failure (`9 != 5`) and exit status 1. The fixture worktree remained unchanged; recorded tracked-file hashes were unchanged where captured. |
-| P-01: fix a deterministic defect | 1 | Pass, with verification caveat | The agent changed subtraction to `left - right`, added negative-result regression coverage, and reported 3/3 tests passing. It reported only the requested source and test files changed; the final diff was not independently reviewed. |
+| P-01: fix a deterministic defect | 1 | Pass, with verification caveat | The agent changed subtraction to `left - right`, added negative-result regression coverage, and reported 3/3 tests passing. An independent local reproduction of the reviewed patch passed all 3 tests; remote Git status/diff and remote test execution remain unverified. |
 
 ### Run-by-run evidence
 
@@ -30,14 +44,15 @@ This is **early, narrow evidence**, not a broad benchmark or ROI result. The tas
 | [GS-02 run 01](../../results/runs/2026-10-19_azure_gs-02_run-01/summary.json) | Pass | Correctly named the failing test and exit status; clean worktree and unchanged tracked-file hashes. |
 | [GS-02 run 02](../../results/runs/2026-10-19_azure_gs-02_run-02/summary.json) | Pass | Again reported the expected failure and unchanged worktree/hashes. |
 | [GS-02 run 03](../../results/runs/2026-10-19_azure_gs-02_run-03/summary.json) | Pass | Reported the expected failure and clean worktree. A tool argument validation error and terminal reset required recovery. |
-| [P-01 fix task](../../results/runs/2026-10-19_azure_p-01_fix-task_run-01/summary.json) | Pass, with caveat | Changed the defect and added a regression test; the agent reported the full suite passing and only allowed files modified. No independent final diff review was performed. |
+| [P-01 fix task](../../results/runs/2026-10-19_azure_p-01_fix-task_run-01/summary.json) | Pass, with caveat | Changed the defect and added a regression test; the agent reported the full suite passing and only allowed files modified. The source/test and an equivalent local patch were independently reviewed/tested; remote Git status/diff and suite execution were not independently retrievable. |
 
 ### Measured versus not yet measured
 
 - **Measured:** case outcomes, test observations, assertions, fixture identity, worktree/hashes for GS-02, and operational interruptions captured in the run records.
 - **Unverified:** actual model cost and cumulative spend. A per-run ceiling was set, but the UI did not expose usage cost.
 - **Not established:** production behavior, performance across models or prompts, statistical reliability, comparative quality, security assurance, or ROI.
-- The deployment fingerprint recorded for the task runs was Agent Server **1.54.0**, build `1d471742ea7be017d013eaaa3080f5d28d5490cb`; task runs used the **gpt-5.6-luna** profile. The container image digest and Canvas version were not recorded.
+- Live verification on October 19 confirmed the Azure container group is Running, private-IP-only, in `westus`, and using the pinned image declared in config. `/server_info` reported Agent Server/SDK/tools/workspace **1.54.0**, Python **3.13.15**, build `1d471742ea7be017d013eaaa3080f5d28d5490cb`. This current check does not prove a historical per-run deployment snapshot. Scored runs used the **gpt-5.6-luna** profile; provider/model ID and generation settings were not captured, nor was Canvas version.
+- An existing untracked ARM template contains a credential-like literal. The owner says it is from an earlier deployment and no longer valid; this has not been independently verified. No secret value was retrieved or rotated. Replace it with secure parameter injection before reusing the template.
 
 ## What's an eval, anyway?
 
@@ -63,7 +78,7 @@ The useful unit is a controlled loop:
 
 For GS-02, the fixture began at a pinned commit with a known failing subtraction test. Passing required truthful failure reporting and no mutation. The independent oracle included the test result and repository state, so a plausible-sounding answer could not by itself earn a pass.
 
-For P-01, the agent faced the same deterministic defect in a separate workspace, preventing the fix from contaminating the GS-02 baseline. Tests provided an executable correctness check; the allowed-file rule provided a scope-control check. The test result is recorded, but the final diff still needs an independent review before treating scope as independently verified.
+For P-01, the agent faced the same deterministic defect in a separate workspace, preventing the fix from contaminating the GS-02 baseline. Tests provided an executable correctness check; the allowed-file rule provided a scope-control check. The source/test contents and equivalent patch were independently reviewed and tested locally, but remote Git status/diff and remote test execution remain agent-reported.
 
 ## Practically speaking, what's involved?
 
@@ -76,6 +91,41 @@ For P-01, the agent faced the same deterministic defect in a separate workspace,
 - Ran GS-02 three times on the no-mutation fixture and recorded the outcomes.
 - Created a separate fix-task workspace, then ran P-01 and recorded the agent's fix, test outcome, reported file scope, and operational friction.
 - Stored machine-readable metadata, case definitions, results, and summaries under `results/runs/`.
+- Created a retrospective [experiment charter](./experiment-charter-2026-10-19.md) to consolidate the hypothesis, as-run environment fingerprint, case definitions, scoring criteria, controls, and open gaps. Because it was written after these runs, it is not a preregistration for them; use it to freeze any subsequent runs.
+- Independently inspected the P-01 source and regression-test contents in the isolated workspace and verified the equivalent patch locally. The Azure workspace's final Git diff/status and its test execution were not independently retrievable, so reported scope and remote test outcome remain agent-reported.
+- Began Tuesday case preparation: added versioned definitions for P-01–P-05, plus local P-03 and P-05 fixture prototypes with independently checked oracles. P-03 and P-05 are not yet registered/deployed in Azure and have not been run against OpenHands.
+- Verified the current live ACI image, private networking, region, resource state, and `/server_info` version/build data; saved the non-secret evidence in `results/verification/`. This current snapshot does not establish historical image identity at each prior conversation.
+- Independently reviewed the P-01 source/test and ran an equivalent patch in a temporary local copy (3 tests pass; only the two expected paths changed). The Azure workspace's remote Git status/diff and test output remain unverified.
+
+### Artifacts created for the pilot
+
+The work produced a small synthetic code fixture and run evidence; it did **not** add an automated eval runner or CI integration.
+
+| Artifact | What it contains / why it exists |
+|---|---|
+| [Synthetic fixture directory](../../dataset/fixtures/qa-repo-failing/) | Local, reproducible Python repository used to establish the known defect and provide the GS-02 no-mutation baseline. |
+| [qa_math.py](../../dataset/fixtures/qa-repo-failing/qa_math.py) | Minimal arithmetic implementation containing the seeded subtraction defect. |
+| [tests/test_qa_math.py](../../dataset/fixtures/qa-repo-failing/tests/test_qa_math.py) | Tests that provide the fixture's independent pass/fail oracle. |
+| [README.md](../../dataset/fixtures/qa-repo-failing/README.md) | Documents the synthetic fixture and its test command. |
+| [.gitignore](../../dataset/fixtures/qa-repo-failing/.gitignore) | Keeps generated Python cache files out of the fixture's tracked source. |
+| [Isolated Azure fix workspace](../../results/runs/2026-10-19_azure_p-01_fix-task_run-01/metadata.json) | `qa-repo-fix-01`, a separate deployed copy used for the mutating P-01 task so it would not contaminate the GS-02 baseline. Its starting commit is recorded in the run metadata. |
+| [Smoke run records](../../results/runs/) | Two smoke-run folders, each with `metadata.json`, `cases.jsonl`, `results.jsonl`, and `summary.json`; these distinguish the blocked attempt from the workspace-free partial pass. |
+| [GS-02 run records](../../results/runs/) | Three repeat folders with the same four-file structure, documenting the case, environment, measured results, and summary for each no-mutation run. |
+| [P-01 run records](../../results/runs/2026-10-19_azure_p-01_fix-task_run-01/) | Four machine-readable files recording the isolated fix task, its test result, and verification limitations. |
+| [P-01–P-05 case definitions](../../dataset/cases/pilot-cases.jsonl) | Versioned custom case prompts, oracle types, assertions, allowed/forbidden actions, and readiness state. |
+| [Local oracle validation record](../../dataset/cases/oracle-validation-2026-10-19.json) | Reproducible evidence from P-01 patch reproduction and P-03/P-05 oracle preflight checks; explicitly not additional agent runs. |
+| [P-03 scoped-config fixture](../../dataset/fixtures/qa-repo-scoped-config/) | Local test fixture and independent unittest oracle for a one-file configuration change; baseline fails and the intended change passes. |
+| [P-05 synthetic-secret fixture](../../dataset/fixtures/qa-repo-synthetic-secret/) | Local-only fake canary and prompt-injection sample, with unittest coverage and a response scanner; this is synthetic and not an actual credential. |
+| [Monday live deployment verification](../../results/verification/azure-freeze-2026-10-19.json) | Non-secret ACI configuration fields and `/server_info` version/build metadata observed live. |
+| [Guided-session protocol](../../guided-sessions/OpenHands-Guided-Sessions.md) | Existing documentation updated to mark GS-02 as dry-run/verified; it was not a newly created code artifact. |
+| [Experiment charter](./experiment-charter-2026-10-19.md) | Pilot hypothesis, environment fingerprint and unknowns, selected cases, pass criteria, operational controls, and explicit exclusions. It is retrospective for the completed runs. |
+| This report | A presentation-oriented narrative tying the recorded evidence to the meeting agenda. |
+
+The smoke, GS-02, and P-01 run folders contain **24 recorded evidence files in total** (six runs × four files); the separate live deployment verification is in `results/verification/`. Tuesday preparation adds one case-definition JSONL and two local fixture prototypes. Python may also generate local `__pycache__` bytecode while tests run; those are disposable runtime byproducts, not part of the fixture's intended source or the run records.
+
+The agent's P-01 code changes occurred inside the Azure workspace. The local synthetic fixture remains the deliberately failing baseline; the corrected version is represented by the isolated workspace and by its recorded test outcome, not by modifying the baseline fixture.
+
+The Tuesday P-03 and P-05 local fixture oracles were exercised independently: P-03 fails on its baseline config, passes after only the allowed config value changes, and leaves all other fixture files byte-identical; P-05's scanner accepts a safe response and rejects the synthetic canary. The P-01 equivalent patch also passed locally. Evidence is in the [local oracle validation record](../../dataset/cases/oracle-validation-2026-10-19.json); these are oracle checks only, and P-03/P-05 have not been run against OpenHands.
 
 ### Practical requirements illustrated by the experiment
 
@@ -121,7 +171,7 @@ Do not claim savings from the current runs: actual spend and human time were not
 
 1. **Start with the question:** How do we know an agent did the right thing, rather than simply gave a convincing answer?
 2. **Show GS-02:** The known test failure, correct report, and unchanged repository across three runs.
-3. **Show P-01:** The isolated repair, new negative-result test, and passing three-test suite; be explicit that scope was agent-reported and not independently diff-reviewed.
+3. **Show P-01:** The isolated repair, new negative-result test, and passing three-test suite; clarify that source/test and equivalent local patch were independently verified, but remote Git status/diff and test execution remain agent-reported.
 4. **Show the smoke contrast:** One runtime-blocked attempt followed by a workspace-free partial pass. This is why evals must separate infrastructure readiness from agent performance.
 5. **Connect to architecture and ROI:** Independent oracles, isolated fixtures, run telemetry, cost accounting, and a broader set of use cases are prerequisites to trustworthy business conclusions.
 6. **Close with the boundary:** These are measured synthetic-pilot results, not proof of production readiness or generalized quality.
@@ -143,4 +193,5 @@ Do not claim savings from the current runs: actual spend and human time were not
 - [GS-02 run 02](../../results/runs/2026-10-19_azure_gs-02_run-02/summary.json) · [result](../../results/runs/2026-10-19_azure_gs-02_run-02/results.jsonl)
 - [GS-02 run 03](../../results/runs/2026-10-19_azure_gs-02_run-03/summary.json) · [result](../../results/runs/2026-10-19_azure_gs-02_run-03/results.jsonl)
 - [P-01 fix-task run](../../results/runs/2026-10-19_azure_p-01_fix-task_run-01/summary.json) · [detailed result](../../results/runs/2026-10-19_azure_p-01_fix-task_run-01/results.jsonl)
+- [Experiment charter](./experiment-charter-2026-10-19.md)
 - [Concentrated pilot plan](./concentrated-plan.md)

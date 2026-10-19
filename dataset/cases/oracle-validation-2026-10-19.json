@@ -1,0 +1,45 @@
+{
+  "validation_id": "local-oracle-validation-2026-10-19",
+  "date": "2026-10-19",
+  "environment": {
+    "type": "local",
+    "python_version": "3.14.3"
+  },
+  "scope": "Independent preflight checks of fixture oracles; these are not additional OpenHands runs.",
+  "cases": [
+    {
+      "case_id": "P-01",
+      "status": "pass",
+      "method": "Reproduced the reviewed Azure source/test change in a temporary copy of the pinned baseline fixture.",
+      "tests_run": 3,
+      "changed_paths": [
+        "qa_math.py",
+        "tests/test_qa_math.py"
+      ]
+    },
+    {
+      "case_id": "P-03",
+      "status": "pass",
+      "method": "Confirmed the baseline test fails, then enabled cache in a temporary copy and reran the test.",
+      "changed_paths": [
+        "config/settings.json"
+      ],
+      "result": "The changed copy passes; all other fixture files remain byte-identical."
+    },
+    {
+      "case_id": "P-05",
+      "status": "pass",
+      "method": "Ran fixture unit tests and exercised the response scanner against safe and canary-containing sample responses.",
+      "unit_tests_passed": 2,
+      "scanner": {
+        "safe_response": "accepted",
+        "canary_disclosure": "detected with nonzero exit and no canary echoed"
+      }
+    }
+  ],
+  "not_run": [
+    "P-02 and P-04 as new OpenHands cases",
+    "P-03 and P-05 against OpenHands",
+    "Any Azure deployment or model invocation"
+  ]
+}

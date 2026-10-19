@@ -1,0 +1,9 @@
+{
+  "service": {
+    "timeout_seconds": 30,
+    "cache": {
+      "enabled": false,
+      "ttl_seconds": 120
+    }
+  }
+}
