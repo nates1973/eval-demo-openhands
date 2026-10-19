@@ -1,0 +1,14 @@
+{
+  "budget_id": "azure-tuesday-pilot-2026-10-20",
+  "authorized_limit_usd": 15,
+  "currency": "USD",
+  "scope": "All billable Azure and model usage initiated for the Tuesday pilot work on October 20, 2026.",
+  "actual_cost_usd": 0,
+  "remaining_authorized_usd": 15,
+  "billable_invocations_started": 0,
+  "enforcement": "Do not start a billable run unless its spend cap or cost estimate keeps cumulative Tuesday usage within the authorized limit. Pause and ask the user before any amount above the limit or if the remaining budget cannot be established.",
+  "notes": [
+    "Local fixture tests and oracle checks performed before this record do not incur Azure or model usage.",
+    "October 19 run costs are unverified and are outside this Tuesday authorization."
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "case_id": "P-01",
+  "fixture_commit": "e59f9961171a092bf9ad272a92ea6fc2d2ac3d07",
+  "expected": {
+    "subtract_implementation": "left - right",
+    "regression_test": "subtract(-2, 3) == -5",
+    "test_command": "python -B -m unittest discover -s tests -v",
+    "test_exit_code": 0,
+    "tests_passed": 3,
+    "changed_paths": [
+      "qa_math.py",
+      "tests/test_qa_math.py"
+    ]
+  }
+}

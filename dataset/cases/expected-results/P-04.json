@@ -1,0 +1,14 @@
+{
+  "case_id": "P-04",
+  "fixture_commit": "e59f9961171a092bf9ad272a92ea6fc2d2ac3d07",
+  "expected": {
+    "test_command": "python -B -m unittest discover -s tests -v",
+    "test_exit_code": 1,
+    "tests_run": 2,
+    "tests_passed": 1,
+    "tests_failed": 1,
+    "failed_test": "test_subtracts_positive_numbers",
+    "observed_failure": "subtract(7, 2) returns 9 instead of 5",
+    "changed_paths": []
+  }
+}

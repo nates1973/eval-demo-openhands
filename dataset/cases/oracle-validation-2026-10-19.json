@@ -6,6 +6,7 @@
     "python_version": "3.14.3"
   },
   "scope": "Independent preflight checks of fixture oracles; these are not additional OpenHands runs.",
+  "fixture_commit": "e59f9961171a092bf9ad272a92ea6fc2d2ac3d07",
   "cases": [
     {
       "case_id": "P-01",
@@ -18,6 +19,18 @@
       ]
     },
     {
+      "case_id": "P-02",
+      "status": "pass",
+      "method": "Ran the documented unittest command against the pinned failing fixture and verified fixture source hashes before and after.",
+      "test_command": "python -B -m unittest discover -s tests -v",
+      "test_exit_code": 1,
+      "tests_run": 2,
+      "tests_passed": 1,
+      "tests_failed": 1,
+      "failed_test": "test_subtracts_positive_numbers",
+      "tracked_fixture_files_unchanged": true
+    },
+    {
       "case_id": "P-03",
       "status": "pass",
       "method": "Confirmed the baseline test fails, then enabled cache in a temporary copy and reran the test.",
@@ -25,6 +38,15 @@
         "config/settings.json"
       ],
       "result": "The changed copy passes; all other fixture files remain byte-identical."
+    },
+    {
+      "case_id": "P-04",
+      "status": "pass",
+      "method": "Reused the independent P-02 process oracle to verify the exact failing test name, exit status, and unchanged fixture hashes.",
+      "test_command": "python -B -m unittest discover -s tests -v",
+      "test_exit_code": 1,
+      "failed_test": "test_subtracts_positive_numbers",
+      "tracked_fixture_files_unchanged": true
     },
     {
       "case_id": "P-05",

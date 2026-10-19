@@ -1,0 +1,14 @@
+{
+  "case_id": "P-03",
+  "fixture_commit": "e59f9961171a092bf9ad272a92ea6fc2d2ac3d07",
+  "expected": {
+    "baseline_test_exit_code": 1,
+    "changed_test_command": "python -B -m unittest discover -s tests -v",
+    "changed_test_exit_code": 0,
+    "changed_paths": [
+      "config/settings.json"
+    ],
+    "setting_change": "service.cache.enabled: false -> true",
+    "all_other_settings_unchanged": true
+  }
+}
