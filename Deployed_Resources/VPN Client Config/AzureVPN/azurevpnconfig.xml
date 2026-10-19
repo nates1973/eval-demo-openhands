@@ -1,0 +1,35 @@
+<AzVpnProfile xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.datacontract.org/2004/07/">
+  <any xmlns:d2p1="http://schemas.datacontract.org/2004/07/System.Xml" i:nil="true" />
+  <clientauth>
+    <aad i:nil="true" />
+    <cert>
+      <hash i:nil="true" />
+      <issuer>082905ac4c8c317ff171a3f0c8960771745f523b</issuer>
+    </cert>
+    <type>cert</type>
+    <usernamepass i:nil="true" />
+  </clientauth>
+  <clientconfig i:nil="true" />
+  <name>brownfield-evals-experiment-net</name>
+  <protocolconfig>
+    <sslprotocolConfig>
+      <transportprotocol>tcp</transportprotocol>
+    </sslprotocolConfig>
+  </protocolconfig>
+  <serverlist>
+    <ServerEntry>
+      <displayname i:nil="true" />
+      <fqdn>azuregateway-7e8f0031-e64c-4b98-b11f-16720faa4661-69002f59c65d.vpn.azure.com</fqdn>
+    </ServerEntry>
+  </serverlist>
+  <servervalidation>
+    <Cert>
+      <hash>DF3C24F9BFD666761B268073FE06D1CC8D4F82A4</hash>
+      <issuer i:nil="true" />
+    </Cert>
+    <serversecret>9a1ce4d3b610345573628dda00b7a1b6e55c5fb2c26b3ee4e4ec2895598292b39f23c6f43d0e8e53165e8a898bd7ab1834535ab532ad3cedd7966dd216ef9ba4cd87de739e228b6847eefd2f02e34357017d8ad9bf6b78078f01b9273d93deb52b698f18b1f4de5bb17f55475ffad5eada845005003381febc0a8baf5e20370f817dfec242f040fbb21125153b51be51a13b1bbd96cf7a293de2555c3e5d8863954c662fb68249974d65f20427b6304fcda7109caa0e5ce0d30f8379bfcaf497af55b8e2b985af7eb4c4367f35d071b1283e842a43d6ca77a5cdfc9f749fb7a90504586f8b83dcef20c94523e99a642372104c540d9cf6976dda6ad044666ff5</serversecret>
+    <type>cert</type>
+    <usepinnedroot>false</usepinnedroot>
+  </servervalidation>
+  <version>1</version>
+</AzVpnProfile>

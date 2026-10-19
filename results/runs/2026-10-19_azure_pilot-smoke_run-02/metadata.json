@@ -1,0 +1,26 @@
+{
+  "run_id": "2026-10-19_azure_pilot-smoke_run-02",
+  "recorded_at": "2026-10-19T14:54:41.3578074Z",
+  "environment": "azure",
+  "condition": "baseline",
+  "status": "partial_pass",
+  "spend_cap_usd": 3,
+  "model_profile": {
+    "label": "gpt-5.6-luna"
+  },
+  "workspace_selection": null,
+  "deployment_fingerprint": {
+    "container_group_state": "Running",
+    "agent_server_version": "1.54.0",
+    "agent_server_build_git_sha": "1d471742ea7be017d013eaaa3080f5d28d5490cb",
+    "image_digest": null,
+    "canvas_version": null
+  },
+  "conversation_id": "e8341635-1852-457c-b741-d689cfd21194",
+  "notes": [
+    "The VPN path was reachable before retry; /server_info returned Agent Server 1.54.0.",
+    "The conversation runtime reached Running and completed.",
+    "No workspace was attached, so workspace-change assertions were not assessed.",
+    "OpenHands did not display usage cost; actual cost is unverified."
+  ]
+}

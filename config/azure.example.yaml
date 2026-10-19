@@ -1,0 +1,46 @@
+# Azure instance facts for the study. NO SECRETS in this file.
+#
+# Copy to config/azure.local.yaml (git-ignored) and fill in real values.
+# This example stays committed with placeholders only.
+# Secrets (API keys, tokens) go in .env, never here. See .env.example.
+
+instance:
+  hosting_service: TBD          # container-apps | aci | app-service | vm
+  region: TBD
+  resource_group: TBD
+  subscription_id: TBD          # treat as sensitive; keep only in the .local file
+  container_name: TBD
+  url: TBD                      # https://... ; restrict inbound access to your IP or VPN
+  users: TBD                    # single | shared
+  cpu: TBD
+  memory_gb: TBD
+  persistent_volumes:
+    state: TBD                  # mount for /home/openhands/.openhands
+    projects: TBD               # mount for /projects
+  reset_procedure: TBD          # how the instance returns to baseline between runs
+
+registry:
+  name: TBD                     # for example an Azure Container Registry name
+  image_repository: TBD
+  tag_scheme: "pre-<sha7> | post-<nn>"   # immutable tags, never latest
+
+build:
+  upstream_commit: 71427af5b426b3f1270db86341dffe30a947d53c   # pinned, plan section 4.7
+  agent_server_version: 1.54.0
+  automation_version: 1.19.3
+  canvas_version: 1.27.1
+  telemetry_key_blanked: false  # set true once blanked in both pre and post builds
+
+model:
+  provider: TBD                 # for example azure-openai | other
+  endpoint_name: TBD            # name only; the key lives in .env
+  primary_model_id: TBD
+  primary_model_version: TBD
+  secondary_model_id: TBD       # cheaper model for the model-swap experiment
+  temperature: TBD
+  spend_cap_usd_per_run: TBD
+  spend_cap_usd_total: TBD
+
+access:
+  driving_method: TBD           # manual | playwright | api
+  event_log_export: TBD         # how full event logs are retrieved

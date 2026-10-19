@@ -2,7 +2,7 @@
 
 **Date:** 2026-10-14
 **Inputs:** [initial-evals-plan.md](../docs/initial-evals-plan.md) (section 4.6), [initial-evals-report.md](../docs/initial-evals-report.md) (GQ/GD catalog), the feature map in `OpenHands/.agents/skills/verify-openhands/references/feature-map/` (F01–F27)
-**Status:** Draft v0. Not yet dry-run. See "Verification before first use" below.
+**Status:** Draft v0. GS-02 was dry-run on 2026-10-19; the other sessions remain unverified. See "Verification before first use" below.
 
 ## Purpose
 
@@ -15,9 +15,9 @@ The same scripts run **pre** (before changes made in response to eval findings) 
 
 ## Verification before first use
 
-This draft was built from the feature-map index and the report catalog. I did not read each feature file or run anything against the instance. Before the first scored run:
+This draft was built from the feature-map index and the report catalog. I did not read each feature file. Before using the remaining sessions:
 
-1. Dry-run each session once and correct any step, label or selector that does not match the real UI.
+1. Dry-run each remaining session once and correct any step, label or selector that does not match the real UI. GS-02 was verified against the Azure instance on 2026-10-19.
 2. Check each session's steps against its feature file (listed per session) for current behavior, known issues and gotchas.
 3. Confirm the open questions in the last section.
 

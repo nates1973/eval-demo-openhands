@@ -1,0 +1,13 @@
+{
+  "run_id": "2026-10-19_azure_pilot-smoke_run-01",
+  "status": "blocked",
+  "executions_attempted": 1,
+  "executions_completed": 0,
+  "assertions_scored": 0,
+  "result": "Indeterminate: the OpenHands conversation runtime did not start.",
+  "measured_findings": [
+    "The Azure container group was Running, and /server_info reported Agent Server 1.54.0.",
+    "Canvas reported Server Stopped and the session WebSocket closed before connection."
+  ],
+  "next_step": "Diagnose the session runtime/WebSocket and workspace selection path, then retry this smoke check before running a task case."
+}

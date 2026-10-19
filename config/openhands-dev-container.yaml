@@ -1,0 +1,58 @@
+apiVersion: '2021-10-01'
+location: westus
+name: openhands-dev-container
+
+properties:
+  sku: Standard
+  osType: Linux
+
+  containers:
+    - name: openhands-dev-container
+      properties:
+        image: ghcr.io/openhands/agent-canvas@sha256:91b7a217dcbefe8c10562523b043458ed1dfaf8ba770194b319fe754cee03f23
+
+        ports:
+          - protocol: TCP
+            port: 8000
+
+        environmentVariables:
+          - name: LOCAL_BACKEND_API_KEY
+            secureValue: "${LOCAL_BACKEND_API_KEY}"
+
+        resources:
+          requests:
+            memoryInGB: 4
+            cpu: 2
+
+        volumeMounts:
+          - name: openhands-data
+            mountPath: /home/openhands/.openhands
+            
+          - name: openhands-project
+            mountPath: /project
+            
+  restartPolicy: Always
+
+  ipAddress:
+    type: Private
+    ports:
+      - protocol: TCP
+        port: 8000
+
+  subnetIds:
+    - id: /subscriptions/57ebfaff-6dc5-476d-84b3-99a5e1297d5a/resourceGroups/brownfield-evals-experiment/providers/Microsoft.Network/virtualNetworks/brownfield-evals-experiment-net/subnets/ContainerNet
+
+  volumes:
+    - name: openhands-data
+      azureFile:
+        shareName: openhands-data
+        storageAccountName: openhandsstorage
+        storageAccountKey: "${STORAGE_ACCOUNT_KEY}"
+        readOnly: false
+
+    - name: openhands-project
+      azureFile:
+        shareName: openhands-project
+        storageAccountName: openhandsstorage
+        storageAccountKey: "${STORAGE_ACCOUNT_KEY}"
+        readOnly: false

@@ -1,0 +1,26 @@
+{
+  "run_id": "2026-10-19_azure_p-01_fix-task_run-01",
+  "recorded_at": "2026-10-19T15:32:23Z",
+  "environment": "azure",
+  "condition": "baseline",
+  "status": "pass",
+  "spend_cap_usd": 3,
+  "model_profile": {
+    "label": "gpt-5.6-luna"
+  },
+  "workspace": {
+    "name": "qa-repo-fix-01",
+    "fixture_commit": "dfc69dd2aa8952b5ff3b1c7f5365b83acb36fb35"
+  },
+  "deployment_fingerprint": {
+    "container_group_state": null,
+    "agent_server_version": "1.54.0",
+    "agent_server_build_git_sha": "1d471742ea7be017d013eaaa3080f5d28d5490cb",
+    "image_digest": null,
+    "canvas_version": null
+  },
+  "conversation_id": "36535720-718e-4c7a-b0df-02479d494373",
+  "cost_usd": null,
+  "cost_note": "Usage cost was not displayed; actual cost is unverified.",
+  "independent_diff_review": false
+}

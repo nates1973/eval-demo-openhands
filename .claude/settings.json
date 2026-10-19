@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -n \"^### 4.7\\\\|^## 5\" initial-evals-plan.md)",
+      "Bash(grep -n \"pinned commit\\\\|Pin the upstream\\\\|71427\\\\|build\\\\b\" initial-evals-plan.md)",
+      "Bash(cat config/openhands-dev-container.yaml)",
+      "Bash(cat config/azure.example.yaml)",
+      "Bash(cat Deployed_Resources/Deploy-AzContainer.ps1)",
+      "Bash(ls -la \"Deployed_Resources/VPN Client Config\")",
+      "Bash(git diff *)",
+      "Bash(sed -E 's/\\(subscription_id:\\\\s*\\)\\\\S+/\\\\1<redacted>/' config/azure.local.yaml)",
+      "Bash(grep -n \"public IP\\\\|Public\" docs/initial-evals-plan.md)",
+      "Bash(cat \"C:/Users/nsouther/source/JumpStart Practice Projects/Eval Demo - Open Hands/.claude/settings.local.json\"; echo ---; grep -n \"deny\\\\|storage\" \"C:/Users/nsouther/.claude/settings.json\" \"C:/Users/nsouther/source/JumpStart Practice Projects/Eval Demo - Open Hands/.claude/settings.json\" 2>&1 | head)",
+      "Read(//c/Users/nsouther/.claude/**)"
+    ]
+  }
+}

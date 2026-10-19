@@ -3,6 +3,7 @@
 **Date:** 2026-10-13
 **Inputs:** [initial-evals-report.md](./initial-evals-report.md), [OpenHands-Guided-Sessions.md](../guided-sessions/OpenHands-Guided-Sessions.md)
 **Status:** Draft for review. Framework characteristics in section 5 come from general knowledge and have not been checked against current docs. Phase 0 verifies them.
+**Revision (2026-10-16):** The study no longer depends on building or modifying OpenHands. Stage 1 is fully black-box against the deployed instance and changes only what is reachable from outside (model, settings, released image version). Work that needs source changes and redeployment moves to an optional Stage 2, behind a decision gate (section 7.1). Sections affected: 1, 1.1, 4.2, 4.3, 4.6, 4.7, 6, 7, 8 and 9.
 
 ## Executive summary
 
@@ -23,9 +24,11 @@ This plan runs three connected workstreams on one codebase.
 
    The strongest evidence is a **regression-injection experiment** (section 4.2), which tests detection directly.
 2. **RAGAS is probably a poor fit, and the study should say so.** The report found no first-party RAG pipeline in this repo. RAGAS's core metrics (faithfulness, context precision/recall) assume retrieval. Include it, but score it on its agent metrics and on honest fit. A tool that doesn't fit is a legitimate finding for the brownfield question.
-3. **Pick the system under test (SUT) deliberately.** Canvas is a frontend and launcher, and the Agent Server owns agent behavior. The report recommends not simulating that ownership. This plan treats the **SUT as Canvas plus a pinned Agent Server plus a pinned model config**, driven through the same API/UI paths users use. That keeps the study inside this repo's boundary and still reaches agent quality.
+3. **Pick the system under test (SUT) deliberately.** Canvas is a frontend and launcher, and the Agent Server owns agent behavior. The report recommends not simulating that ownership. This plan treats the **SUT as the deployed Canvas plus Agent Server plus a recorded model config**, driven through the same API/UI paths users use. The deployed version is recorded and frozen for the study, not rebuilt from source. That still reaches agent quality.
 
-4. **Private instance, no real traffic.** This is a private study on a borrowed copy of the code, deployed only as a private Azure instance for the study. No real users exist, and no changes go back upstream. Every number comes from **controlled experiments on synthetic tasks** (locally and on the Azure instance), or from an **explicit model that extrapolates** those results to assumed usage. Reports must label each figure as *measured* (observed in a run) or *interpolated* (derived from stated assumptions). See sections 1 and 4.5.
+4. **Private instance, no real traffic.** This is a private study against a private Azure instance deployed for the study. No real users exist, and no changes go back upstream.
+
+5. **Two stages, with a gate.** Stage 1 does everything that needs no change to OpenHands code and reports on it. Stage 2 (source-level regression injection and code-level "post" changes) runs only if the Stage 1 report concludes it is needed (section 7.1). Every number comes from **controlled experiments on synthetic tasks** (locally and on the Azure instance), or from an **explicit model that extrapolates** those results to assumed usage. Reports must label each figure as *measured* (observed in a run) or *interpolated* (derived from stated assumptions). See sections 1 and 4.5.
 
 **Proposed duration:** about 8 weeks, with an optional extension. See section 7.
 
@@ -42,7 +45,7 @@ This plan runs three connected workstreams on one codebase.
 **Assumptions:**
 - Read access to the repo and the ability to run a local Agent Server, plus an LLM API budget.
 - All eval data is synthetic. No real user data is used.
-- **The study runs on a private copy of the OpenHands code, deployed as a private Azure instance. That instance has no real users and no user traffic, and nothing is contributed upstream.** The study team owns the copy and the instance, but not the upstream project.
+- **The study runs against a private Azure instance of OpenHands. That instance has no real users and no user traffic, and nothing is contributed upstream.** The study team owns the instance, but not the upstream project. In Stage 1 the OpenHands code is not modified or rebuilt.
 - The Azure instance is a **controlled test environment, not production**. It adds deployed-environment effects (latency, cold starts, auth, real cost) that a local stack cannot show. Open facts to record in Phase 0: single-user or shared, and which model endpoint provider is used.
 - "Usage" means **simulated usage**: scripted tasks and synthetic workload models. Production behavior, user satisfaction and real incident rates are out of reach and are not claimed.
 - The upstream PR, issue and CI history is the only source of "real" signal (for example, historical bugs). It is read-only and describes upstream's past, not this study's usage.
@@ -51,12 +54,13 @@ This plan runs three connected workstreams on one codebase.
 
 | # | Decision | Recommendation |
 |---|---|---|
-| D1 | SUT boundary: Canvas only, or Canvas plus Agent Server? | Canvas plus pinned Agent Server. Without it there is almost nothing AI-specific to evaluate. **Limit:** agent behavior (prompts, tools, agent loop, critic) lives in `software-agent-sdk`, which is not in this repo. Unless the SDK is forked, "post" changes are limited to Canvas code, configuration, defaults and version pins (section 1.1). |
+| D1 | SUT boundary: Canvas only, or Canvas plus Agent Server? | Canvas plus Agent Server, as deployed. Without it there is almost nothing AI-specific to evaluate. **Limit:** agent behavior (prompts, tools, agent loop, critic) lives in `software-agent-sdk`, which is not part of this study. In Stage 1, "post" changes are limited to what is reachable from outside: model, settings, defaults and released image version (section 1.1). |
 | D2 | Which model(s) and budget? | One pinned primary model, plus one cheaper model for the model-swap experiment. Set a hard cost cap per run. |
 | D3 | Is the goal to contribute upstream or run a private study? | **Resolved: private study, no upstream contribution.** Eval artifacts and local changes stay in this copy. |
 | D4 | Who are the SME labelers for judge calibration? | Name at least two people. Calibration is the main source of credibility for LLM-judge metrics. If none are available, use your own labels and limit judge-calibration claims. |
-| D5 | Track upstream OpenHands changes during the study? | **Resolved: no.** Pin one upstream commit as the study baseline and do not sync during the study (section 4.7). The commit itself is still to be chosen. |
-| D6 | Fork `software-agent-sdk` so post changes can affect agent behavior? | No by default. Revisit only if findings point to agent-side causes. It would add a second repo to pin and a custom agent-server image. |
+| D5 | Track upstream OpenHands changes during the study? | **Resolved: no.** Freeze the deployed version for the study and record its image tag and digest (section 4.7). Do not upgrade the instance between `pre` and `post` runs unless the upgrade is itself the experiment. |
+| D6 | Fork `software-agent-sdk` so post changes can affect agent behavior? | **Deferred to Stage 2.** No in Stage 1. Revisit at the gate (section 7.1), and only if findings point to agent-side causes. |
+| D7 | Build and modify OpenHands from source? | **Deferred to Stage 2.** Stage 1 needs no source. The local clone is kept as an optional asset for Stage 2 only, and it is not required. |
 
 ### 1.1 Where things live
 
@@ -72,14 +76,19 @@ results/    scores + event logs ◀─reads───  event logs, workspace stat
 
 **Why outside:** evals ask whether the deployed agent does the task correctly and safely, which needs a running agent, a model and a workspace. Black-box evals run unchanged against `pre`, `post`, local and Azure builds, which keeps the pre/post comparison valid. They also keep the OpenHands copy clean, with no merge conflicts and nothing measured by code it depends on.
 
-**What does change inside the OpenHands copy**
-- **"Post" product changes**, made in response to findings, on a branch and rebuilt into the image.
-- **Regression injections**, each a small patch applied to the copy, built and deployed. The patches are stored as diffs in the study repo and are not committed to OpenHands.
-- **The existing tests stay in place.** The detection experiment runs them where they are and records the result.
+**What changes in Stage 1 (no OpenHands code is touched)**
+- **"Post" changes** made in response to findings, limited to what is reachable from outside: model, settings and defaults through the UI or API, environment configuration, and switching to another released image version.
+- **Regression injections of the same kind** (section 4.2, Stage 1 list).
+- **The existing upstream tests are not run in Stage 1,** since there is no source tree. The detection comparison against the existing suite is therefore a Stage 2 item, or a desk comparison against upstream's published CI results.
+
+**What changes in Stage 2 only (conditional, section 7.1)**
+- **"Post" product changes** to the code, on a branch rebuilt into the image.
+- **Source-level regression injections**, each a small patch applied to a copy of the source, built and deployed. The patches are stored as diffs in the study repo and are not committed to OpenHands.
+- **The existing tests** run where they are, to build the detection comparison.
 
 **Related repositories** (all under the `OpenHands` GitHub organization, per `AGENTS.md`; ownership of the organization is not verified here)
 
-| Repo | Owns | How it enters the build | In the study |
+| Repo | Owns | How it enters the deployed image | In the study |
 |---|---|---|---|
 | `OpenHands/OpenHands` | Canvas UI, local-stack orchestration | This repo, built from source | The system under test |
 | `OpenHands/software-agent-sdk` | Agent Server, agent loop, tools, API | Pinned base image (`agent-server`) | Pinned, not forked (D6) |
@@ -92,7 +101,7 @@ results/    scores + event logs ◀─reads───  event logs, workspace stat
 
 ```
 Eval Demo - Open Hands/
-├── OpenHands/            # borrowed code, untouched (own .git)
+├── OpenHands/            # OPTIONAL, Stage 2 only: local clone, untouched (own .git). Not needed for Stage 1.
 ├── docs/                 # report, plan, playbook (time log, friction log, final report)
 ├── dataset/              # cases.jsonl, schema.md, fixtures/
 ├── guided-sessions/      # OpenHands-Guided-Sessions.md, scripts/
@@ -211,33 +220,43 @@ All metrics below are computed from scripted runs against the pinned local stack
 
 ### 4.2 Regression-injection experiment (core of the evidence)
 
-Evals earn their value by catching problems the current process misses. Test that directly:
+Evals earn their value by catching problems the current process misses. Test that directly. The experiment runs in two stages, split by whether the regression can be applied without changing OpenHands code.
 
-1. Build a library of 15–25 **plausible regressions** across these classes:
-   - Model swap to a weaker or cheaper model
-   - System-prompt or default-setting change (for example, the empty-model-setting case in GQ-08)
-   - Tool-approval gate disabled
-   - Wrong-workspace routing
-   - Secret leaked into events
-   - Stale state after backend switch
-   - Truncated or altered diff reporting
-   - Upload size limit changed
-2. Apply each, one at a time, to a branch or fixture.
-3. Record which mechanisms flag it: existing PR CI, existing nightly E2E, mock-LLM E2E, the new evals.
-4. Report the detection matrix and the marginal detection rate attributable to evals.
+**Stage 1: externally reachable regressions (no code changes)**
+
+Candidate classes. Phase 0 verifies which are actually reachable on the deployed instance. Drop or move to Stage 2 any that are not.
+- Model swap to a weaker or cheaper model
+- Default-setting change through the UI or API (for example, the empty-model-setting case in GQ-08)
+- Tool-approval or confirmation mode changed
+- Agent Server or Canvas version change, by redeploying a different released image (upgrade or downgrade)
+- Configuration or environment changes (for example, an upload size limit, if it is configurable without a rebuild)
+
+**Stage 2: source-level regressions (needs code changes and redeployment, conditional)**
+- Wrong-workspace routing
+- Secret leaked into events
+- Stale state after backend switch
+- Truncated or altered diff reporting
+- Any change to the tool-approval gate logic itself
+- Upload size limit changed, if it is not configurable
+
+**Procedure (both stages)**
+1. Build the library of 15–25 plausible regressions. Tag each `stage: 1` or `stage: 2`. Stage 1 may produce fewer than 15, and the report states the actual number.
+2. Apply each, one at a time, to the instance or a fixture, and revert before the next.
+3. Record which mechanisms flag it. In Stage 1 the mechanisms are the new evals and any signal visible from outside (errors, UI state, `/server_info`). Existing PR CI, nightly E2E and mock-LLM E2E need the source tree, so they join the matrix in Stage 2.
+4. Report the detection matrix per stage. The marginal detection rate versus the existing suite is a Stage 2 result. Stage 1 reports the evals' own detection rate and which regression classes are out of reach.
 
 **Blinding:** the person who writes the injected regressions should not be the person who tunes the evals. Otherwise the evals will be implicitly fit to the injections. Keep roughly a third of injections held out until after the suite is final.
 
-**Reuse:** the repo has optional Stryker mutation testing. Mutation-score results are a useful comparison for what the deterministic suite already catches, but they cover code-level mutants, not agent-behavior regressions. Present them as a complement.
+**Reuse (Stage 2):** the repo has optional Stryker mutation testing. Mutation-score results are a useful comparison for what the deterministic suite already catches, but they cover code-level mutants, not agent-behavior regressions. Present them as a complement.
 
 ### 4.3 Experimental design
 
 | Concern | Approach |
 |---|---|
-| **Baseline definition** | "Before" means (a) the existing CI and E2E signals plus (b) the unchanged system scored on the new dataset. Record both. Without (b) there is no quality baseline. |
+| **Baseline definition** | "Before" means (a) the existing CI and E2E signals plus (b) the unchanged system scored on the new dataset. Record both. Without (b) there is no quality baseline. In Stage 1, (a) is a desk review of upstream's published CI configuration and results, since the tests are not run locally. |
 | **Nondeterminism** | Run each case k times (start k=5 for the baseline). Report means with bootstrap confidence intervals. Do not claim an improvement smaller than the run-to-run noise. |
-| **Pinning** | Pin the upstream OpenHands commit, Agent Server and automation versions, image tags, model ID and version, temperature, seed (where supported), fixture repo commits, and the dataset version (section 4.7). |
-| **After-state meaning** | "After" has two parts: (1) the suite is built and runs against the local stack and the private instance, and (2) the system has been modified using findings (private edits, redeployed only to the private instance, never released). Report detection benefits from (1) and quality improvement from (2) separately. Evals do not change the system by themselves, so a pre/post comparison measures the effect of the changes made in response to findings, not of the evals. Neither is a production outcome. |
+| **Pinning** | Record and freeze the deployed image tag and digest, the Agent Server and Canvas versions reported by `/server_info`, model ID and version, temperature, seed (where supported), fixture repo commits, and the dataset version (section 4.7). |
+| **After-state meaning** | "After" has two parts: (1) the suite is built and runs against the private instance, and (2) the system has been modified using findings. In Stage 1, modification means external changes only (model, settings, released version). Code changes are Stage 2 (private edits, redeployed only to the private instance, never released). Report detection benefits from (1) and quality improvement from (2) separately. Evals do not change the system by themselves, so a pre/post comparison measures the effect of the changes made in response to findings, not of the evals. Neither is a production outcome. |
 | **Attribution** | Log each product change with the eval finding that motivated it. Don't credit evals for improvements that came from a model upgrade. Use a model-held-constant comparison where possible. |
 | **Dataset hygiene** | Dev/test split. Tune only against dev. Report on a held-out test split. Keep failure history when cases are retired. |
 | **Honesty about limits** | A single system, one team, one 8-week window, and no real users. Avoid ROI dollar claims. Report measured effects and costs, and label every extrapolation. |
@@ -353,7 +372,7 @@ Guided sessions are scripted, repeatable sessions run against the private Azure 
 - **Noise floor:** Run an A/A pair (two `pre` runs) first. Do not claim effects smaller than that noise.
 - **Repeats and pairing:** Run k repeats per script and pair results by script. Report bootstrap confidence intervals.
 - **Confounders:** Silent model updates by the provider, Azure load variation and version drift. Re-run a `pre` sample at the end to check for drift.
-- **What "post" means:** The system after iterating on eval findings (section 4.3). It is not "evals installed", since that changes nothing by itself. To test the eval gate itself, apply injected regressions to the instance (section 4.2) and record whether the evals flag them.
+- **What "post" means:** The system after iterating on eval findings (section 4.3). It is not "evals installed", since that changes nothing by itself. In Stage 1, "post" is limited to external changes (model, settings, released version), so the pre/post comparison may show little or no product-quality change. Report that honestly. To test the eval gate itself, apply injected regressions to the instance (section 4.2) and record whether the evals flag them.
 
 **What this evidence is and is not**
 - Measured (M): system behavior under controlled tasks, plus deployed-environment effects such as latency, cold starts and cost.
@@ -364,32 +383,45 @@ Guided sessions are scripted, repeatable sessions run against the private Azure 
 - Hard spend cap on the model endpoint.
 - Scrub logs (section 4.5.1) before storing them or quoting them in reports.
 
-### 4.7 Pinned baseline, build and release procedure
+### 4.7 Frozen deployment and version record
 
-**Policy (D5):** pin one upstream OpenHands commit as the baseline and do not sync during the study. Upstream changes several times a day, and a pull between `pre` and `post` would mix upstream's changes with yours, so no difference could be attributed to your changes.
+**Policy (D5, revised):** the study does not build OpenHands. It evaluates the instance that is deployed, records exactly what that is, and freezes it. Upstream changes several times a day, and an upgrade between `pre` and `post` would mix upstream's changes with yours, so no difference could be attributed to your changes. Upgrade the instance only when the upgrade is itself an experiment (section 4.2, Stage 1).
 
-**Pinned values to record** (the values below are from `config/defaults.json` in the local copy and should be re-read at pin time)
+**Values to record at the start of Phase 0 and in every run's metadata**
 
-| Item | Value or source |
+| Item | Source |
 |---|---|
-| Upstream commit | **`71427af5b426b3f1270db86341dffe30a947d53c`** (2026-10-14), the commit already checked out in the local copy. Nothing is checked out, pulled or fetched in `OpenHands/`: it stays exactly as cloned. The feature map in that tree names `2bdc0e9` as its maintenance baseline, which is the map's own record and not a study pin. |
-| Agent Server | 1.54.0 (image `ghcr.io/openhands/agent-server:1.54.0-python`) |
-| Automation | 1.19.3 |
-| Canvas | 1.27.1 |
-| Minimum compatible Agent Server | 1.51.0 |
-| Model ID and version | To be set (D2) |
-| Image tags | Immutable, for example `pre-<sha7>` and `post-<nn>`. Never `latest`. |
+| Image reference and **digest** | Container configuration (`config/openhands-dev-container.yaml`) and the registry. A tag alone is not enough, since tags can move. |
+| Agent Server, Canvas and Automation versions | `/server_info` and the container logs |
+| Upstream commit, if the image exposes it | `org.opencontainers.image.revision` label or the `AGENT_CANVAS_BUILD_GIT_SHA` variable. Record "not available" if absent. |
+| Model ID, provider and version | Instance settings, plus provider-side version info where available |
+| Instance configuration | Settings export or the container environment, with secrets removed |
+| Azure region, container size, single-user or shared | Azure portal or deployment files |
+| Telemetry state | Whether upstream analytics is reachable from the instance. Check the container's outbound traffic or configuration. If it cannot be disabled by configuration, record it as a known limitation, and do not rebuild just to remove it in Stage 1. |
 
-**Build and deploy**
-1. **Identify the current Azure deployment.** The image records its commit in the `org.opencontainers.image.revision` label and the `AGENT_CANVAS_BUILD_GIT_SHA` variable. Check these and `/server_info`.
-2. **Rebuild `pre` from the pinned commit,** which is the unmodified working tree as cloned. Make post changes and injections in a copy of the tree (or a copy produced with `git archive`), never in `OpenHands/` itself, so the `pre` source is always reproducible. Do not compare a modified build against an older prebuilt image. Build `pre` and `post` through the same pipeline so build differences cannot affect results.
-3. **Build** with `node scripts/docker-build.mjs --tag <name> -- --build-arg OPENHANDS_BUILD_GIT_SHA=<sha>`, using an amd64 image. Build in the container registry or locally, then push.
-4. **Deploy** by updating the container to the new tag. Mount persistent volumes for `/home/openhands/.openhands` and `/projects`, and decide on a reset procedure between runs.
-5. **Secrets and access:** secret key, session API key and model credentials as Azure secrets. HTTPS, with inbound access restricted to your IP or VPN, because the instance runs agent-executed code.
-6. **Telemetry:** the image carries upstream's analytics key from `config/defaults.json`, wired in by the entrypoint. Blank it in the study build and apply the same change to both `pre` and `post`, so study traffic does not reach upstream's analytics and the change is not a confounder. The routing has not been traced here, so verify it.
-7. **Record** the image digest and the environment fields in every run's metadata.
+**Phase 0 findings (2026-10-16, from live Azure queries and `/server_info`; details in `config/azure.local.yaml`, which is git-ignored)**
+- **Deployment:** an Azure Container Instance in resource group `brownfield-evals-experiment`, westus. Running, 0 restarts, started 2026-10-16 18:27 UTC. Earlier config files described a different, older deployment and are no longer valid.
+- **Image:** `ghcr.io/openhands/agent-canvas:latest`, an upstream prebuilt image on a floating tag. Open item: pin by digest (step 1 below).
+- **Measured versions (re-checked after the redeploy):** Agent Server, SDK, tools and workspace 1.54.0 (`refs/tags/v1.54.0`). Canvas and Automation versions are not reported by `/server_info` and remain unverified. The Agent Server runs inside the same container, so the SUT is one deployed unit (D1).
+- **Local clone is not the deployed code:** the `OpenHands/` clone is at commit `71427af5…`, which was chosen before the deployment was rebuilt. It has not been matched to the image. Confirm the match before using the clone in Stage 2.
+- **Network posture (updated 2026-10-16 after redeploy):** the container now has only a private IP (`10.0.2.4`) in subnet `ContainerNet` (`10.0.2.0/24`), which is delegated to Azure Container Instances and has a `Microsoft.Storage` service endpoint. `/server_info` answers over the VPN and the old public IP no longer responds. Access is still plain HTTP, so `LOCAL_BACKEND_API_KEY` is unencrypted inside the VNet and VPN path. The storage account `openhandsstorage` is now restricted: default action Deny, a single VNet rule allowing `ContainerNet`, no IP rules, and the `AzureServices` bypass (output supplied by the study owner, since the query is blocked for the assistant). One caveat: with `bypass: AzureServices`, trusted Azure services can still reach the account, and the account key remains the credential for the file shares.
+- **Model:** nothing in the container configuration names a model or endpoint, and the spend cap is not enforced by the container. D2 remains open.
 
-**Optional later extension:** run the suite against successive upstream commits. Each break is a real regression the suite did or did not catch. It is separate evidence from the pre/post pairs, and is out of scope for now.
+**Deploy and operate (Stage 1)**
+1. **Identify the current deployment** from the table above and record it as the `pre` baseline. If the digest cannot be recorded, redeploy once using a digest-pinned reference.
+2. **Persistence and reset:** confirm persistent volumes for `/home/openhands/.openhands` and `/projects`, and write a reset procedure between runs.
+3. **Secrets and access:** secret key, session API key and model credentials held as Azure secrets. HTTPS, with inbound access restricted to your IP or VPN, because the instance runs agent-executed code.
+4. **Spend cap** on the model endpoint.
+5. **Version-change experiments** (Stage 1 injection class): deploy a different released image by digest, run the suite, and restore the baseline digest. Record both digests.
+6. **Record** the digest and the environment fields in every run's metadata.
+
+**Stage 2 only: build from source.** If the gate (section 7.1) approves code-level work:
+- Pin an upstream commit in a copy of the source (the local `OpenHands/` clone is already at `71427af5b426b3f1270db86341dffe30a947d53c`, dated 2026-10-14; confirm it matches the deployed image first).
+- Rebuild `pre` from that commit and redeploy, so `pre` and `post` use the same pipeline and build differences cannot affect results. Do not compare a modified build against an older prebuilt image.
+- Build with `node scripts/docker-build.mjs --tag <name> -- --build-arg OPENHANDS_BUILD_GIT_SHA=<sha>` for amd64. Use immutable tags such as `pre-<sha7>` and `post-<nn>`, never `latest`.
+- Make post changes and injections in a copy of the tree, never in `OpenHands/` itself. Apply the same telemetry change to both builds so it is not a confounder.
+
+**Optional later extension:** run the suite against successive upstream releases. Each break is a real regression the suite did or did not catch. It is separate evidence from the pre/post pairs. It needs only released images, so it can run in Stage 1 if time allows.
 
 ---
 
@@ -463,25 +495,47 @@ Report the weighted total **and** the per-criterion scores, since weighting refl
 | Cloud drift or noise confounds pre/post on Azure | Pin versions, run the A/A noise floor, pair by script, re-run a `pre` sample at the end (section 4.6). |
 | Secrets or endpoints leak through session logs | Scrub before storage, synthetic fixtures only, spend cap on the model endpoint. |
 | Interpolated figures mistaken for measurements | M/I tagging on every reported number. Keep I figures out of headline claims. |
-| Local changes drift from upstream | Pin the upstream commit. Do not sync during the study (D5). Note that findings apply to that snapshot. |
-| Build differences confound pre/post | Rebuild `pre` from the pinned commit through the same pipeline as `post`. Immutable tags and recorded image digests (section 4.7). |
-| Study traffic reaches upstream analytics | Blank the telemetry key in both builds and verify the routing (section 4.7). |
-| Agent-behavior findings cannot be fixed in this repo | State the limit (D1). Fork the SDK only if justified (D6). Otherwise report such findings as recommendations. |
+| Deployed version drifts or is upgraded mid-study | Freeze the instance, record the image digest in every run, and re-run a `pre` sample at the end (sections 4.6, 4.7). |
+| Build differences confound pre/post (Stage 2) | Rebuild `pre` from the pinned commit through the same pipeline as `post`. Immutable tags and recorded digests (section 4.7). |
+| Study traffic reaches upstream analytics | Check and record the telemetry state (section 4.7). In Stage 2, blank the key in both builds. |
+| Stage 1 detection matrix is narrower than the full design | Tag each injection by stage, report the number actually run, and list the regression classes that were out of reach. Decide at the gate (section 7.1). |
+| Stage 1 shows little pre/post product change | Expected, since only external changes are possible. Report it as a finding, and let the gate decide whether code-level changes are warranted. |
+| Agent-behavior findings cannot be fixed without code changes | State the limit (D1). Take it to the gate (D6, D7). Otherwise report such findings as recommendations. |
 
 ---
 
-## 7. Phased timeline (about 8 weeks)
+## 7. Phased timeline (about 8 weeks for Stage 1, plus an optional Stage 2)
+
+Stage 1 changes no OpenHands code. Stage 2 is conditional and has its own gate.
 
 | Phase | Weeks | Activities | Exit criteria |
 |---|---|---|---|
-| **0. Setup and verification** | 1 | Settle D1–D4 and D6 (D5, the pinned commit, and the folder layout are done). Rebuild `pre` from the pinned commit and deploy it. Verify framework facts against current docs. Stand up pinned local stack and confirm the Azure instance (single-user or shared, model endpoint provider, spend cap). Start time and friction logs. Pre-register metrics and thresholds. | Decisions recorded, stack runs, metrics frozen |
+| **0. Setup and verification** | 1 | Settle D1, D2, D4 (D3 and D5 are done, D6 and D7 are deferred). Record and freeze the deployed version (section 4.7). Verify which injection classes are externally reachable. Verify framework facts against current docs. Confirm the Azure instance facts (single-user or shared, model endpoint provider, spend cap). Start time and friction logs. Pre-register metrics and thresholds. | Decisions recorded, deployment recorded, metrics frozen |
 | **1. Dataset v0 and custom harness** | 2–3 | Build fixtures. Write 30+ cases. Implement the custom harness (baseline tool). | Dataset v0 reviewed. First scored run. |
-| **2. Baseline** | 3–4 | k-run baseline scorecard. Document existing CI signals. Build the injection library. Draft the workload model and assumptions register. Collect SME calibration labels. | Baseline report with confidence intervals |
+| **2. Baseline** | 3–4 | k-run baseline scorecard and A/A noise floor. Desk review of upstream's published CI signals. Build the injection library, tagged by stage. Draft the workload model and assumptions register. Collect SME calibration labels. | Baseline report with confidence intervals |
 | **3. Framework bake-off** | 4–6 | Implement the 8–10 cases in each framework. Complete the scorecard. | Scorecard with evidence |
-| **4. Detection experiment and iteration** | 6–7 | Run the regression-injection matrix. Iterate on findings. Re-run on the held-out test split. Run the interpolation model and sensitivity analysis. | Detection matrix, after-state scorecard and tagged projections |
-| **5. Synthesis** | 8 | Playbook, framework recommendation, process-metric analysis, limitations. | Final report |
+| **4. Stage 1 detection experiment and iteration** | 6–7 | Run the Stage 1 injection matrix. Iterate on findings using external changes only. Re-run on the held-out test split. Run the interpolation model and sensitivity analysis. | Stage 1 detection matrix, after-state scorecard and tagged projections |
+| **5. Stage 1 synthesis and gate** | 8 | Playbook, framework recommendation, process-metric analysis, limitations, and the gate recommendation (section 7.1). | Stage 1 final report |
+| **6. Stage 2 (conditional)** | TBD after the gate | Build `pre` from a pinned commit. Run the source-level injection matrix and the existing-suite comparison. Make code-level post changes and re-measure. | Stage 2 addendum to the report |
 
 Phases 2 and 3 can overlap if two people are available.
+
+### 7.1 Stage 2 decision gate
+
+At the end of Phase 5, the Stage 1 report includes a recommendation, and you decide whether to continue.
+
+**Evidence that favors stopping after Stage 1**
+- The Stage 1 detection matrix covers the regression classes that matter most for the P1/P2 risk map.
+- The evals detected the externally reachable regressions at an acceptable rate, with usable confidence intervals.
+- The playbook and framework recommendation are supported by the work done.
+- The remaining questions (marginal value against the existing suite, code-level fixes) are not needed for the study's stated goals.
+
+**Evidence that favors continuing to Stage 2**
+- Important regression classes (secrets in events, workspace routing, approval-gate logic) were out of reach and are central to the study's claims.
+- Findings point to causes in Canvas or Agent Server code that cannot be tested or fixed externally.
+- The comparison with the existing suite is needed for the benefit claim.
+
+**Gate output:** a short decision record in `docs/` with the recommendation, the evidence, the expected Stage 2 effort and cost, and the decision. If Stage 2 proceeds, settle D6 and D7 at that point.
 
 ---
 
@@ -490,21 +544,24 @@ Phases 2 and 3 can overlap if two people are available.
 1. `dataset/` with versioned JSONL, fixtures and a schema document
 2. `frameworks/` with the custom baseline runner and the per-framework implementations
 3. Baseline and after-state scorecards (Tier 1–4 metrics, with confidence intervals)
-4. Regression-injection detection matrix
+4. Regression-injection detection matrix (Stage 1, with a Stage 2 addendum if the gate approves it)
 5. Workload model and assumptions register (section 4.5.2), with grounding-source evidence and sensitivity analysis
 5a. Guided-session scripts, driver and pre/post results from the Azure instance (section 4.6)
-5b. Build, deploy and reset runbook for the Azure instance, with the pinned-baseline record (section 4.7)
+5b. Deploy, reset and version-change runbook for the Azure instance, with the frozen-deployment record (section 4.7)
 6. Framework comparison scorecard and use-case recommendations
 7. Brownfield evals playbook: stages, effort data, friction log, generalization tags
 8. Final report: executive summary first, then method, results and limitations, with every figure tagged measured or interpolated
+9. Stage 2 gate decision record (section 7.1)
 
 ---
 
 ## 9. Immediate next steps
 
-1. Decide D1, D2, D4 and D6 (D3 and D5 are resolved). D1 and D4 block the most work. If SME labelers are not available, D4 needs a fallback, for example your own labels with a documented limit on judge-calibration claims.
-2. Choose and pin the model configuration and set the cost cap.
-3. Freeze the metric list and thresholds (section 4.1).
-4. Ask me to draft the dataset schema and the first 12 JSONL cases from the report, or the custom harness skeleton, as the first build task.
+1. Decide D1, D2 and D4. D3 and D5 are resolved, and D6 and D7 are deferred to the gate. If SME labelers are not available, D4 needs a fallback, for example your own labels with a documented limit on judge-calibration claims.
+2. Record and freeze the deployed version (section 4.7): image digest, `/server_info` versions, model configuration, instance settings.
+3. Check which injection classes are reachable from outside, and tag the injection library by stage.
+4. Choose and pin the model configuration and set the cost cap.
+5. Freeze the metric list and thresholds (section 4.1).
+6. Ask me to draft the dataset schema and the first 12 JSONL cases from the report, or the custom harness skeleton, as the first build task.
 
 *Review note: this is an internal planning draft. If any part is shared outside the team, for example in a client deliverable, have it reviewed first. Confirm the framework licensing and data-handling terms with Legal and Compliance, and have the Data Privacy Officer review any plan that uses real user data.*

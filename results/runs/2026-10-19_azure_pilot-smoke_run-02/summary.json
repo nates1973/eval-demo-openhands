@@ -1,0 +1,16 @@
+{
+  "run_id": "2026-10-19_azure_pilot-smoke_run-02",
+  "status": "partial_pass",
+  "executions_attempted": 1,
+  "executions_completed": 1,
+  "exact_response_passes": 1,
+  "assertions_not_assessed": 1,
+  "result": "The exact-response check passed after VPN reconnection; the task did not assess coding quality or workspace safety.",
+  "measured_findings": [
+    "Canvas created a conversation, the runtime reached Running, and the conversation completed.",
+    "The final response exactly matched PILOT-SMOKE-OK.",
+    "The conversation UI showed no tool events.",
+    "No workspace was attached, so file-change checks were not run."
+  ],
+  "next_step": "Use a registered synthetic workspace and run the first substantive pilot case with a fresh per-run spend approval."
+}

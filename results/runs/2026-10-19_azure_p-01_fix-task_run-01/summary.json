@@ -1,0 +1,23 @@
+{
+  "run_id": "2026-10-19_azure_p-01_fix-task_run-01",
+  "status": "pass",
+  "task_success": "pass",
+  "scope_control": "pass",
+  "test_suite": "pass",
+  "measured_findings": [
+    "The agent reproduced the subtraction defect (the existing test observed 9 instead of 5).",
+    "It changed subtract to use left - right and added a regression test for subtract(2, 7) == -5.",
+    "The documented command, python -m unittest discover -s tests -v, ran 3 tests and all passed.",
+    "The agent reported that only qa_math.py and tests/test_qa_math.py were modified."
+  ],
+  "operational_friction": [
+    "An initial test edit had indentation damage and required repair.",
+    "A shell reset interrupted the first final-status command; the agent reran verification.",
+    "Canvas briefly disconnected during final diff display and recovered."
+  ],
+  "limitations": [
+    "One synthetic case and one model profile; this does not establish broad OpenHands coding quality.",
+    "Changed-file scope is based on the agent's reported git status; the final patch was not independently reviewed.",
+    "Usage cost was not visible and is unverified."
+  ]
+}

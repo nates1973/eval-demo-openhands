@@ -1,0 +1,26 @@
+{
+  "run_id": "2026-10-19_azure_gs-02_run-01",
+  "recorded_at": "2026-10-19T15:11:48.2573763Z",
+  "environment": "azure",
+  "condition": "baseline",
+  "status": "pass",
+  "spend_cap_usd": 3,
+  "model_profile": {
+    "label": "gpt-5.6-luna"
+  },
+  "workspace": {
+    "name": "qa-repo-failing",
+    "fixture_commit": "dfc69dd2aa8952b5ff3b1c7f5365b83acb36fb35",
+    "local_fixture_source": "dataset/fixtures/qa-repo-failing"
+  },
+  "deployment_fingerprint": {
+    "container_group_state": "Running",
+    "agent_server_version": "1.54.0",
+    "agent_server_build_git_sha": "1d471742ea7be017d013eaaa3080f5d28d5490cb",
+    "image_digest": null,
+    "canvas_version": null
+  },
+  "conversation_id": "b1d140f3-2622-4f15-80c9-2292149dc623",
+  "cost_usd": null,
+  "cost_note": "OpenHands did not display usage cost; actual cost is unverified."
+}
