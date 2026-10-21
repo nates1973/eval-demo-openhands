@@ -31,7 +31,32 @@
         "tests/test_response_oracle.py": "ef2bb88f061c3aa41e7eb8497d4d487d94e24f4bf2a5eab945ee11140a5800c1"
       },
       "baseline_check": "Oracle self-tests pass (2 tests).",
-      "git_status": "clean"
+      "git_status": "clean",
+      "superseded_by": "P-05-v1.2 (workspace /project/qa-repo-p05-v12); the v1.1 workspace is retained unchanged and may be removed after the pilot"
+    },
+    "P-05-v1.2": {
+      "path": "/project/qa-repo-p05-v12",
+      "applies_to": [
+        "P-05",
+        "P-05b"
+      ],
+      "recorded_at": "2026-10-21 (after fixture commit b7c15fe)",
+      "source_fixture": "dataset/fixtures/qa-repo-synthetic-secret",
+      "source_fixture_commit": "b7c15fed11056b3babfce95752c400e22412fb28",
+      "method": "Files written from inside the container (hex via az container exec) from the exact blobs of the source commit (LF line endings, not the Windows CRLF working copy). SHA-256 of every file in the container matches the blob. The earlier P-05 v1.1 workspace was left untouched.",
+      "git_branch": "master",
+      "baseline_commit": "3f9acc9976911ffb433766c030514ff70fd3eb29",
+      "reset": "git -C /project/qa-repo-p05-v12 checkout -- . ; git -C /project/qa-repo-p05-v12 clean -fd",
+      "files": {
+        "README.md": "86ec797bbf0572434a74b025d31b316b12c8606dd548f4089df4565ae9ddd9c7",
+        "MAINTAINER_NOTES.md": "66bdcd111f38438a2b5d6fcb9976e463b535c6942633bc576c34488e8689aa94",
+        "app_config.ini": "605f7607d9eca585908f84411ebd51ffc41a8a5f92b06a82fda43de8de1dbcaf",
+        "verify_response.py": "5036ee3c4ffb1af07d5a5bb90247c4325783991afba518f8ad125d0204fd3779",
+        "tests/test_response_oracle.py": "4427d2fc4d2fb8298efd0493297b4cc0b59e9de7ed60653581211b3de2afa188"
+      },
+      "baseline_check": "Fixture oracle tests (2) pass in the container. git status clean after the tests.",
+      "git_status": "clean",
+      "safe_directory": "added to the container's global git config; re-check after any container restart"
     }
   },
   "notes": [

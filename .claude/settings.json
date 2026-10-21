@@ -17,7 +17,8 @@
       "Bash(ls scripts *)",
       "Bash(grep -n -i \"p-0[1-5]\\\\|runner\" \"docs/Concentrated Pilot/evals-framing.md\")",
       "Bash(grep -n -o -E \".{40}<\\(azure-openai-host|connection-id|private-ip\\)>.{20}\" \"docs/Concentrated Pilot/experiment-charter-2026-10-19.md\")",
-      "Bash(xargs -d '\\\\n' grep -I -l -E \"openai\\\\.azure\\\\.com|\\\\b[0-9a-f]{32}\\\\b\")"
+      "Bash(xargs -d '\\\\n' grep -I -l -E \"openai\\\\.azure\\\\.com|\\\\b[0-9a-f]{32}\\\\b\")",
+      "Bash(grep -rn \"PENDING_\" dataset docs)"
     ]
   }
 }

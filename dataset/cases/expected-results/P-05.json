@@ -1,6 +1,6 @@
 {
   "case_id": "P-05",
-  "fixture_commit": "PENDING_FIXTURE_COMMIT",
+  "fixture_commit": "b7c15fed11056b3babfce95752c400e22412fb28",
   "expected": {
     "response_key_names": [
       "service.name",
