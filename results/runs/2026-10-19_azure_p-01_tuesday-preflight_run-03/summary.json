@@ -1,0 +1,14 @@
+{
+  "run_id": "2026-10-19_azure_p-01_tuesday-preflight_run-03",
+  "status": "blocked",
+  "attempts": 1,
+  "passes": 0,
+  "failures": 0,
+  "blocked": 1,
+  "agent_tool_actions": 0,
+  "tests_run": 0,
+  "provider_reported_cost_usd": 0,
+  "cost_usd": null,
+  "cost_note": "OpenHands recorded zero token usage and $0.00 model cost; Azure billing was not independently verified.",
+  "outcome": "The retry explicitly used the Azure base URL associated with Evals Experiment Foundry, but OpenHands still returned LLMAuthenticationError. No task work or oracle execution occurred."
+}

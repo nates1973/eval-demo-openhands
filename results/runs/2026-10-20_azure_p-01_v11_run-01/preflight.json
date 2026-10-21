@@ -1,0 +1,31 @@
+{
+  "run_id": "2026-10-20_azure_p-01_v11_run-01",
+  "case_id": "P-01",
+  "case_version": "1.1",
+  "fixture_commit": "e59f9961171a092bf9ad272a92ea6fc2d2ac3d07",
+  "workspace": "/project/qa-repo-p01-v11",
+  "workspace_note": "Persistent Azure Files share; own git repo, commit ae0da318c513c8b320b5af25a5e363b14c6e407b (fixture files hash-identical to dataset/fixtures/qa-repo-failing). Needs git safe.directory for the share ownership.",
+  "preflight": {
+    "captured_utc": "2026-10-20T22:24:06Z",
+    "method": "read-only GET of /server_info, /api/profiles, /api/settings; credentials not recorded",
+    "agent_server_version": "1.54.0",
+    "build_git_sha": "1d471742ea7be017d013eaaa3080f5d28d5490cb",
+    "active_llm_profile": "gpt-5.6-luna",
+    "global_model": "openai/gpt-5.6-luna",
+    "global_base_url_host": "<azure-openai-host>",
+    "global_base_url_path": "/openai/v1",
+    "connection_id": "<connection-id>",
+    "api_key_present": true,
+    "expected_match": true
+  },
+  "egress_control": {
+    "firewall": "experiment-firewall (Basic) / experiment-firewall-policy",
+    "rule": "Only-Azure-AI-Models: allow *.openai.azure.com 80/443 from <private-ip>/24; default deny",
+    "route_table": "container-traffic-route-table: 0.0.0.0/0 -> <private-ip>, attached to ContainerNet",
+    "logging": "AZFWApplicationRule -> Log Analytics workspace firewall-logs (AzureDiagnostics)",
+    "verified_utc": "2026-10-20T21:43Z",
+    "result": "api.openai.com denied; Azure OpenAI host allowed; smoke calls on luna and terra reached Azure only"
+  },
+  "status": "used",
+  "notes": "Preflight applies to run-01 (max_iterations 6, invalid) and run-02 (max_iterations 25, completed). The firewall check after run-02 showed 4 Azure Allow entries and no Deny."
+}

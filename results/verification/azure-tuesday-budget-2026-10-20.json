@@ -2,13 +2,26 @@
   "budget_id": "azure-tuesday-pilot-2026-10-20",
   "authorized_limit_usd": 15,
   "currency": "USD",
-  "scope": "All billable Azure and model usage initiated for the Tuesday pilot work on October 20, 2026.",
-  "actual_cost_usd": 0,
-  "remaining_authorized_usd": 15,
-  "billable_invocations_started": 0,
+  "scope": "All billable Azure and model usage for the Tuesday pilot work, including the preflight attempt made October 19, 2026.",
+  "actual_cost_usd": null,
+  "provider_reported_cost_usd": 0,
+  "remaining_authorized_usd": null,
+  "billable_invocations_started": 3,
+  "status": "third_attempt_blocked_authentication",
+  "readiness_checks": {
+    "openhands_endpoint": "reachable after VPN reconnect; /server_info returned HTTP 200 and Agent Server 1.54.0",
+    "container_group": "Running",
+    "azure_subscription_budget": "none configured; Azure budgets are alerting only and do not stop consumption",
+    "azure_actual_cost_query": "unavailable; Cost Management API returned HTTP 429 and BadRequest on retries",
+    "provider_hard_cap": "not verified; Agent Server reports model openai/gpt-5.6-luna with no token rates or configured token limits; the one authorized attempt was best-effort",
+    "foundry_project": "not configured in the current VS Code Foundry extension"
+  },
   "enforcement": "Do not start a billable run unless its spend cap or cost estimate keeps cumulative Tuesday usage within the authorized limit. Pause and ask the user before any amount above the limit or if the remaining budget cannot be established.",
   "notes": [
     "Local fixture tests and oracle checks performed before this record do not incur Azure or model usage.",
+    "The second P-01 attempt was blocked on 2026-10-19 ahead of the planned Tuesday date. Despite using Evals Experiment Foundry, the request went to api.openai.com and received HTTP 401 invalid_api_key. A third attempt explicitly set that connection's Azure base URL, but OpenHands still returned LLMAuthenticationError before any tool action. OpenHands recorded zero tokens and $0.00 model cost for all three blocked attempts; the Azure billing view remains unavailable.",
+    "Azure subscription cost data could not be queried because the Cost Management API returned HTTP 429; this does not establish actual subscription spend.",
+    "The private endpoint now responds after VPN reconnection, but this does not resolve the missing enforceable per-run or cumulative spend control.",
     "October 19 run costs are unverified and are outside this Tuesday authorization."
   ]
 }

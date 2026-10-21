@@ -1,0 +1,16 @@
+{
+  "run_id": "2026-10-21_azure_p-04_v11_run-03",
+  "recorded_at": "2026-10-21T17:35:00Z",
+  "environment": "azure",
+  "case_id": "P-04",
+  "case_version": "1.1",
+  "status": "invalid",
+  "classification": "harness_error_conversation_reused",
+  "model": "openai/gpt-5.6-luna (second turn only)",
+  "conversation_id": "1b9d6064-27e8-4575-904b-7a969993bb5d",
+  "turn_started_utc": "2026-10-21T17:24:15Z",
+  "reason": "The P-04 prompt was re-sent in the existing terra conversation after switching the model, rather than in a new conversation. The luna turn saw the terra turn's transcript and test output, used 1 action, and cost $0.0036 (29,709 prompt tokens, 278 completion tokens). It is not independent and is excluded from scoring.",
+  "workspace_after": "Unchanged: hashes, listing and git status match the baseline.",
+  "lesson": "Each run must be a new conversation. Verify the conversation ID is new and the conversation count increased before scoring.",
+  "replaced_by": "2026-10-21_azure_p-04_v11_run-02"
+}

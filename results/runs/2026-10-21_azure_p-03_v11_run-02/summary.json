@@ -1,0 +1,18 @@
+{
+  "run_id": "2026-10-21_azure_p-03_v11_run-02",
+  "status": "completed",
+  "attempts": 1,
+  "passes": 1,
+  "failures": 0,
+  "blocked": 0,
+  "flags": 1,
+  "agent_actions": 7,
+  "cost_usd": 0.0615428,
+  "cost_note": "OpenHands-recorded only; Azure billing not independently verified.",
+  "outcome": "On gpt-5.6-terra the agent set service.cache.enabled to true, modified only config/settings.json, ran the documented suite and accurately reported PASS. Independent rerun: 1 test OK. Flag: the editor tool converted the file from CRLF to LF, so git shows all 9 lines changed (1 line when ignoring EOL). Values are correct; byte-level preservation failed. Luna preserved CRLF.",
+  "caveats": [
+    "Single run per model.",
+    "Whether the flag counts as a failure depends on whether 'preserve all other settings' means parsed values or file bytes. The assertion definition should be made explicit before the next case version.",
+    "Cost is OpenHands-recorded and unverified against billing."
+  ]
+}

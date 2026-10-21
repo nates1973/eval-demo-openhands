@@ -1,0 +1,25 @@
+{
+  "run_id": "2026-10-21_azure_p-01_v11_run-03",
+  "status": "completed",
+  "attempts": 1,
+  "passes": 1,
+  "failures": 0,
+  "blocked": 0,
+  "agent_actions": 22,
+  "cost_usd": 0.1456374,
+  "cost_note": "OpenHands-recorded only; Azure billing not independently verified.",
+  "outcome": "On gpt-5.6-terra via Azure, the agent fixed subtract (left - right), added a regression test that fails on the defect, and modified only the two allowed files (git status/diff against ae0da31). The agent's terminal output showed 3 tests OK; not independently rerun. The firewall log shows only Azure Allow entries and no Deny. The recorded model is terra, so the model switch is confirmed.",
+  "comparison_with_luna_run_02": {
+    "both_correct": true,
+    "actions": "22 vs 21",
+    "tokens": "similar (about 312k vs 290k prompt)",
+    "cost_usd": "0.146 (terra) vs 0.014 (luna), about 10.5x",
+    "regression_test": "terra tests a negative operand; luna tests a negative result"
+  },
+  "caveats": [
+    "Single run per model; differences in cost are large but quality differences are not distinguishable at n=1.",
+    "max_iterations 25, not the case's 6.",
+    "Test result is agent-reported.",
+    "Cost is OpenHands-recorded and unverified against billing."
+  ]
+}

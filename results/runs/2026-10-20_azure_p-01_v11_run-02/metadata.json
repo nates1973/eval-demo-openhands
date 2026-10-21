@@ -1,0 +1,41 @@
+{
+  "run_id": "2026-10-20_azure_p-01_v11_run-02",
+  "recorded_at": "2026-10-20T23:45:00Z",
+  "environment": "azure",
+  "condition": "baseline",
+  "status": "completed",
+  "case_id": "P-01",
+  "fixture": {
+    "workspace": "/project/qa-repo-p01-v11",
+    "fixture_commit": "ae0da318c513c8b320b5af25a5e363b14c6e407b",
+    "fixture_source": "dataset/fixtures/qa-repo-failing (file hashes verified identical)",
+    "max_iterations": 25,
+    "max_iterations_note": "Deviation from the case's 6. Run-01 hit the cap of 6 after planning and inspection only, with no edit made."
+  },
+  "model": "openai/gpt-5.6-luna",
+  "conversation_id": "59a83dbd-4a86-4676-92c3-178c79fb5d2f",
+  "conversation_created_utc": "2026-10-20T23:37:32Z",
+  "execution_status": "finished",
+  "agent_actions": 21,
+  "usage": {
+    "prompt_tokens": 289640,
+    "completion_tokens": 3757,
+    "cache_read_tokens": 269976,
+    "reasoning_tokens": 1070
+  },
+  "cost_usd": 0.01384072,
+  "cost_note": "OpenHands-recorded model cost only; not independently checked against Azure billing.",
+  "egress_evidence": {
+    "firewall_window": "last 30 min at query time",
+    "azure_openai_host_allow": 4,
+    "denied_requests": 0
+  },
+  "scope_evidence": {
+    "method": "git status and diff in the workspace repo, taken after the run",
+    "modified_files": ["qa_math.py", "tests/test_qa_math.py"],
+    "untracked_files": [],
+    "numstat": {"qa_math.py": "1/1", "tests/test_qa_math.py": "3/0"}
+  },
+  "test_evidence": "Agent-reported: python -B -m unittest discover -s tests -v gave 3 tests passed, exit 0. My independent rerun was not completed because the exec invocation could not set the working directory.",
+  "classification": "agent_completed"
+}

@@ -1,0 +1,9 @@
+{
+  "run_id": "2026-10-21_azure_p-02_v11_run-01",
+  "status": "invalid",
+  "attempts": 1,
+  "passes": 0,
+  "failures": 0,
+  "invalid": 1,
+  "outcome": "Conversation ran in an empty default workspace, not /project/qa-repo-p01-v11. The agent found and tested the old /projects/qa-repo-failing copy and gave a correct diagnosis of it. Classified as a harness error; rerun required with the workspace verified from the conversation record."
+}

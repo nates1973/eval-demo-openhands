@@ -1,0 +1,53 @@
+{
+  "run_id": "2026-10-19_azure_p-01_tuesday-preflight_run-01",
+  "recorded_at": "2026-10-19T20:10:44Z",
+  "environment": "azure",
+  "condition": "baseline",
+  "status": "blocked",
+  "case_id": "P-01",
+  "fixture": {
+    "workspace": "/projects/qa-repo-tuesday-p01-v11",
+    "fixture_commit": "e59f9961171a092bf9ad272a92ea6fc2d2ac3d07",
+    "max_iterations": 6
+  },
+  "model": "openai/gpt-5.6-luna",
+  "deployment_fingerprint": {
+    "agent_server_version": "1.54.0",
+    "build_git_sha": "1d471742ea7be017d013eaaa3080f5d28d5490cb",
+    "image_digest": "sha256:91b7a217dcbefe8c10562523b043458ed1dfaf8ba770194b319fe754cee03f23"
+  },
+  "conversation_id": "b13ec567-038d-4361-bfb6-d6e5ea240cbe",
+  "provider_connection": {
+    "provider_label": "azure",
+    "connection_id": "<connection-id>",
+    "profile_key_set": true,
+    "profile_reports_connection_broken": false,
+    "request_endpoint": "https://api.openai.com/v1/responses",
+    "response_code": 401,
+    "response_error": "invalid_api_key"
+  },
+  "prior_same_connection_evidence": [
+    {
+      "conversation_id": "36535720-718e-4c7a-b0df-02479d494373",
+      "status": "finished",
+      "recorded_model_cost_usd": 0.0111388
+    },
+    {
+      "conversation_id": "b1d140f3-2622-4f15-80c9-2292149dc623",
+      "status": "finished",
+      "recorded_model_cost_usd": 0.00496522
+    }
+  ],
+  "budget_authorization_usd": 15,
+  "provider_reported_cost_usd": 0,
+  "usage": {
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "cache_read_tokens": 0
+  },
+  "cost_usd": null,
+  "cost_note": "OpenHands recorded zero token usage and $0.00 model cost. The Azure billing view is unavailable, so provider-side charges were not independently checked.",
+  "scheduled_pilot_date": "2026-10-20",
+  "actual_attempt_date": "2026-10-19",
+  "classification": "provider_authentication_failure"
+}

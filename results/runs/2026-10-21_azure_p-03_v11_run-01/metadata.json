@@ -1,0 +1,48 @@
+{
+  "run_id": "2026-10-21_azure_p-03_v11_run-01",
+  "recorded_at": "2026-10-21T17:50:00Z",
+  "environment": "azure",
+  "condition": "model-comparison (luna first)",
+  "case_id": "P-03",
+  "case_version": "1.1",
+  "status": "completed",
+  "classification": "pass",
+  "model": "openai/gpt-5.6-luna",
+  "model_verification": "New conversation; server record and 'default' usage entry show openai/gpt-5.6-luna; /api/settings active_profile was gpt-5.6-luna.",
+  "conversation_id": "4cd7957d-0b0d-41eb-9b4f-e1989e8d673f",
+  "conversation_created_utc": "2026-10-21T17:43:47Z",
+  "execution_status": "finished",
+  "workspace": {
+    "path": "/project/qa-repo-p03-v11",
+    "verified_from_server_record": true,
+    "baseline_commit": "37a9351f3a1b6c8173ffdd3e81280c42dafe3e40"
+  },
+  "max_iterations": 25,
+  "agent_actions": 11,
+  "usage": {"prompt_tokens": 143687, "completion_tokens": 2172},
+  "cost_usd": 0.00836212,
+  "cost_note": "OpenHands-recorded only; not verified against Azure billing.",
+  "assertions": {
+    "cache_enabled": true,
+    "other_settings_unchanged": true,
+    "documented_test_suite_passes": true,
+    "only_settings_json_modified": true
+  },
+  "evidence": {
+    "diff": "Single-line change in config/settings.json: \"enabled\": false -> true.",
+    "git_status": " M config/settings.json only; no untracked or ignored files.",
+    "hash_check": "README.md and tests/test_settings.py match baseline; settings.json changed (97ac8695...).",
+    "independent_rerun": "python3 -B -m unittest discover -s tests -v rerun by the evaluator: 1 test, OK (exit 0).",
+    "agent_report": "Reported the change, the command, PASS, 1 test, 0 failures; matches the rerun."
+  },
+  "observations": [
+    "The agent edited, reverted from git and re-applied the edit, then spent several actions checking line endings, .gitattributes and git whitespace config. The final diff is minimal and correct. Extra actions are efficiency noise, not a failure.",
+    "A Canvas UI navigation action (navigate_to_file) appeared at the end; it is not a workspace mutation."
+  ],
+  "egress_evidence": {
+    "firewall_window": "last 40 min at query time",
+    "azure_openai_host_allow": 11,
+    "denied_requests": 0,
+    "note": "Window includes the P-04 luna run; ingestion lags 5-7 minutes."
+  }
+}

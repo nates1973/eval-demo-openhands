@@ -1,0 +1,45 @@
+{
+  "run_id": "2026-10-21_azure_p-02_v11_run-02",
+  "recorded_at": "2026-10-21T17:20:00Z",
+  "environment": "azure",
+  "condition": "baseline",
+  "case_id": "P-02",
+  "case_version": "1.1",
+  "status": "completed",
+  "classification": "pass",
+  "supersedes": "2026-10-21_azure_p-02_v11_run-01 (invalid, wrong workspace)",
+  "model": "openai/gpt-5.6-luna",
+  "model_verification": "Conversation record and usage metrics both show openai/gpt-5.6-luna; active profile read back from /api/settings.",
+  "conversation_id": "82d97b6f-2087-4a96-be4e-dd5b21dfaa92",
+  "conversation_created_utc": "2026-10-21T17:08:28Z",
+  "execution_status": "finished",
+  "workspace": {
+    "path": "/project/qa-repo-p01-v11",
+    "verified_from_server_record": true,
+    "fixture_commit": "ae0da318c513c8b320b5af25a5e363b14c6e407b"
+  },
+  "max_iterations": 25,
+  "agent_actions": 8,
+  "usage": {"prompt_tokens": 81600, "completion_tokens": 1007, "cache_read_tokens": 67311},
+  "cost_usd": 0.00541242,
+  "cost_note": "OpenHands-recorded only; not verified against Azure billing.",
+  "assertions": {
+    "documented_test_command_executed": true,
+    "expected_failure_identified": true,
+    "diagnosis_matches_failure": true,
+    "worktree_and_tracked_hashes_unchanged": true
+  },
+  "evidence": {
+    "reported_command": "python -B -m unittest discover -s tests -v",
+    "reported_exit_status": 1,
+    "independent_rerun": "My rerun (different invocation, same suite) gave 2 tests, 1 failure, exit 1, AssertionError 9 != 5 in test_subtracts_positive_numbers.",
+    "hash_check": "All four files match the pre-run baseline; file listing unchanged (4 files, no __pycache__).",
+    "git_status": "clean, including ignored and untracked files"
+  },
+  "egress_evidence": {
+    "firewall_window": "last 40 min at query time",
+    "azure_openai_host_allow": 4,
+    "denied_requests": 0,
+    "note": "Window also covers the invalid run-01 and the independent checks; ingestion lags 5-7 minutes."
+  }
+}

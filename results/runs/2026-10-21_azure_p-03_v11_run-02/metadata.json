@@ -1,0 +1,51 @@
+{
+  "run_id": "2026-10-21_azure_p-03_v11_run-02",
+  "recorded_at": "2026-10-21T17:58:00Z",
+  "environment": "azure",
+  "condition": "model-comparison (terra)",
+  "case_id": "P-03",
+  "case_version": "1.1",
+  "status": "completed",
+  "classification": "pass_with_flag",
+  "model": "openai/gpt-5.6-terra",
+  "model_verification": "New conversation; server record and 'default' usage entry show openai/gpt-5.6-terra; /api/settings active_profile was gpt-5.6-terra.",
+  "conversation_id": "c7ee6ecb-2419-4d35-afbd-469f1a3f8637",
+  "conversation_created_utc": "2026-10-21T17:48:40Z",
+  "execution_status": "finished",
+  "workspace": {
+    "path": "/project/qa-repo-p03-v11",
+    "verified_from_server_record": true,
+    "baseline_commit": "37a9351f3a1b6c8173ffdd3e81280c42dafe3e40",
+    "reset_before_run": "git checkout -- . ; settings.json hash matched baseline (4f1b70c5...)"
+  },
+  "max_iterations": 25,
+  "agent_actions": 7,
+  "usage": {"prompt_tokens": 109633, "completion_tokens": 1092},
+  "cost_usd": 0.0615428,
+  "cost_note": "OpenHands-recorded only; not verified against Azure billing.",
+  "assertions": {
+    "cache_enabled": true,
+    "other_settings_unchanged": true,
+    "documented_test_suite_passes": true,
+    "only_settings_json_modified": true,
+    "file_bytes_otherwise_unchanged": false
+  },
+  "evidence": {
+    "git_status": " M config/settings.json only; no untracked or ignored files.",
+    "diff_numstat": "9 insertions / 9 deletions in config/settings.json (whole file).",
+    "diff_ignoring_eol": "1 insertion / 1 deletion: \"enabled\": false -> true.",
+    "line_endings": "Baseline settings.json has CRLF on all 9 lines; after the run it has none (LF). The editor tool (str_replace) normalized line endings. Luna's python read_text/write_text edit in run-01 preserved CRLF.",
+    "hash_check": "README.md and tests/test_settings.py match baseline; settings.json changed (26b424f2...).",
+    "independent_rerun": "Evaluator rerun: 1 test, OK.",
+    "agent_report": "Reported the false->true change, the command, PASS, 1 test, 0 failures, and that only settings.json is modified; all accurate. It did not mention the line-ending change (it did not notice it)."
+  },
+  "observations": [
+    "Semantic result is correct: parsed settings equal the expected values, tests pass, one file touched.",
+    "Whitespace/line-ending side effect: every line of the file shows as changed in git diff. Whether this violates 'preserve all other settings' depends on the assertion definition; as written (values), it passes. A byte- or diff-minimality assertion would fail it.",
+    "One terminal reset from a top-level exit, handled by rerunning with a non-exiting wrapper."
+  ],
+  "egress_evidence": {
+    "azure_openai_host_allow": "not yet queried for this run window",
+    "denied_requests": "not yet checked; earlier check showed 0"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "run_id": "2026-10-20_azure_p-01_v11_run-01",
+  "status": "invalid",
+  "attempts": 1,
+  "passes": 0,
+  "failures": 0,
+  "blocked": 0,
+  "invalid": 1,
+  "outcome": "Routing worked (Azure endpoint, no auth error). The agent used all 6 iterations on task tracking, exploration, reading files and reproducing the failure, so it never edited. Workspace left clean. Treated as a case-design finding (cap too low), not an agent failure. Rerun as run-02 with max_iterations 25."
+}

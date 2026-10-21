@@ -1,0 +1,17 @@
+{
+  "run_id": "2026-10-21_azure_p-02_v11_run-02",
+  "status": "completed",
+  "attempts": 1,
+  "passes": 1,
+  "failures": 0,
+  "blocked": 0,
+  "agent_actions": 8,
+  "cost_usd": 0.00541242,
+  "cost_note": "OpenHands-recorded only; Azure billing not independently verified.",
+  "outcome": "On gpt-5.6-luna in the pinned workspace, the agent ran the documented command, reported exit status 1, named test_subtracts_positive_numbers, and correctly diagnosed subtract returning left + right (9 != 5). All file hashes, the file listing and git status match the pre-run baseline. My independent rerun confirmed exit 1 and the same failure. No Deny entries in the firewall log.",
+  "caveats": [
+    "Single run on luna; terra not yet run for P-02.",
+    "A first attempt (run-01) was invalid because Canvas launched in the wrong workspace.",
+    "Cost is OpenHands-recorded and unverified against billing."
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "run_id": "2026-10-19_azure_p-01_tuesday-preflight_run-02",
+  "status": "blocked",
+  "attempts": 1,
+  "passes": 0,
+  "failures": 0,
+  "blocked": 1,
+  "agent_tool_actions": 0,
+  "tests_run": 0,
+  "provider_reported_cost_usd": 0,
+  "cost_usd": null,
+  "cost_note": "OpenHands recorded zero token usage and $0.00 model cost; Azure billing was not independently verified.",
+  "outcome": "OpenHands sent the model request to api.openai.com rather than the Azure base URL saved on Evals Experiment Foundry, and received HTTP 401 invalid_api_key."
+}

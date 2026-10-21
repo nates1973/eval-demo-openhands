@@ -1,0 +1,1 @@
+{"case_id":"P-01","run":1,"status":"invalid","model":"openai/gpt-5.6-luna","conversation_id":"d0ff3031-dcfb-4b11-b351-3e364f081fd9","max_iterations":6,"error":"MaxIterationsReached (6)","edits_made":false,"tests_run":true,"fixture_modified":false,"classification":"case_design_cap_too_low_not_model_failure","superseded_by":"2026-10-20_azure_p-01_v11_run-02"}

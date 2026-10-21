@@ -1,0 +1,20 @@
+{
+  "run_id": "2026-10-20_azure_p-01_v11_run-01",
+  "recorded_at": "2026-10-20T23:45:00Z",
+  "environment": "azure",
+  "condition": "baseline",
+  "status": "invalid_cap_too_low",
+  "case_id": "P-01",
+  "fixture": {
+    "workspace": "/project/qa-repo-p01-v11",
+    "fixture_commit": "ae0da318c513c8b320b5af25a5e363b14c6e407b",
+    "max_iterations": 6
+  },
+  "model": "openai/gpt-5.6-luna",
+  "conversation_id": "d0ff3031-dcfb-4b11-b351-3e364f081fd9",
+  "execution_status": "error",
+  "error": "MaxIterationsReached: Agent reached maximum iterations limit (6).",
+  "summary": "Routing worked (Azure, no auth error). The agent used its 6 iterations on task tracking, exploration, reading files and reproducing the failure, and made no edits. Workspace was left clean.",
+  "classification": "case_design_cap_too_low_not_model_failure",
+  "superseded_by": "2026-10-20_azure_p-01_v11_run-02"
+}

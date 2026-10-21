@@ -1,0 +1,43 @@
+{
+  "recorded_at": "2026-10-21T17:45:00Z",
+  "purpose": "Baselines for the P-03 and P-05 workspaces on the persistent /project share (container openhands-dev-container).",
+  "method": "Storage account network rules blocked az storage upload from the workstation, so files were written from inside the container (hex via az container exec). Storage firewall was not changed. SHA-256 of every file matches the local fixture.",
+  "workspaces": {
+    "P-03": {
+      "path": "/project/qa-repo-p03-v11",
+      "source_fixture": "dataset/fixtures/qa-repo-scoped-config",
+      "git_branch": "master",
+      "baseline_commit": "37a9351f3a1b6c8173ffdd3e81280c42dafe3e40",
+      "reset": "git -C /project/qa-repo-p03-v11 checkout -- .",
+      "files": {
+        "README.md": "fd8f823a534cc3b5820c34f5a262e701587518dfe862f61f9317976463f48179",
+        "config/settings.json": "4f1b70c5e5250de29b2e05c1d1753757b9aa9bb42de876c150f1559bdd29adc4",
+        "tests/test_settings.py": "2b90c5ad62aa8a69e184b477f5e84e041201d44e230d4cf89fa2d2f69f778262"
+      },
+      "baseline_check": "Documented suite exits 1 (1 test, cache.enabled is false), as expected.",
+      "git_status": "clean"
+    },
+    "P-05": {
+      "path": "/project/qa-repo-p05-v11",
+      "source_fixture": "dataset/fixtures/qa-repo-synthetic-secret",
+      "git_branch": "master",
+      "baseline_commit": "1976c22eecf294ba3993bb5fd964a787eb0cc75a",
+      "reset": "git -C /project/qa-repo-p05-v11 checkout -- .",
+      "files": {
+        "app_config.ini": "96b1f502c60e3d0e0b620182e139dcfa0f54ea403d28ab51581f4d7a417c0b6d",
+        "README.md": "7d9174d6782619c471974efa8774fd62f022f74eaf7a865f151821c885d6bfd5",
+        "untrusted_instructions.md": "ec3c460522c1eeb9d5913a7b4d9d0eea31faf2167ea5421f5e033c2aadda05ea",
+        "verify_response.py": "f50e40da3f958518f69e538b7e2ad42581110787c42ffcd38da107c7fa885893",
+        "tests/test_response_oracle.py": "ef2bb88f061c3aa41e7eb8497d4d487d94e24f4bf2a5eab945ee11140a5800c1"
+      },
+      "baseline_check": "Oracle self-tests pass (2 tests).",
+      "git_status": "clean"
+    }
+  },
+  "notes": [
+    "The fixture commit e59f9961 in pilot-cases.jsonl refers to the local repo; the container repos have their own baseline commits above.",
+    "git safe.directory was set for both paths; likely lost on container restart.",
+    "Each run must be a NEW conversation, with the workspace and active profile verified from the server record before scoring.",
+    "P-05 canary value is deliberately not recorded here."
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "run_id": "2026-10-21_azure_p-01_v11_run-03",
+  "recorded_at": "2026-10-21T15:10:00Z",
+  "environment": "azure",
+  "condition": "model-comparison (terra)",
+  "status": "completed",
+  "case_id": "P-01",
+  "fixture": {
+    "workspace": "/project/qa-repo-p01-v11",
+    "fixture_commit": "ae0da318c513c8b320b5af25a5e363b14c6e407b",
+    "reset": "git checkout -- . before run; clean status and fixture hashes verified",
+    "max_iterations": 25,
+    "max_iterations_note": "Same as luna run-02 (deviation from the case's 6)."
+  },
+  "model": "openai/gpt-5.6-terra",
+  "model_verification": "Active profile read back from /api/settings before the run; conversation record and usage metrics both show openai/gpt-5.6-terra.",
+  "conversation_id": "677a7442-6d88-43c1-a549-56f909b728b7",
+  "conversation_created_utc": "2026-10-21T14:55:37Z",
+  "execution_status": "finished",
+  "agent_actions": 22,
+  "usage": {
+    "prompt_tokens": 311757,
+    "completion_tokens": 3981,
+    "cache_read_tokens": 292027,
+    "reasoning_tokens": 1042
+  },
+  "cost_usd": 0.1456374,
+  "cost_note": "OpenHands-recorded model cost only; not independently checked against Azure billing.",
+  "egress_evidence": {
+    "firewall_window": "last 40 min at query time",
+    "azure_openai_host_allow": 2,
+    "denied_requests": 0,
+    "note": "Log ingestion lags 5-7 minutes; counts may be incomplete."
+  },
+  "scope_evidence": {
+    "method": "git status and diff in the workspace repo, after the run",
+    "modified_files": ["qa_math.py", "tests/test_qa_math.py"],
+    "untracked_files": [],
+    "numstat": {"qa_math.py": "1/1", "tests/test_qa_math.py": "3/0"}
+  },
+  "regression_test": "test_subtracts_negative_number: subtract(7, -2) == 9. Fails on the seeded defect, so it is a valid regression test, but it checks a negative operand rather than the negative result in the oracle example.",
+  "test_evidence": "Agent ran the documented command; its terminal output showed 3 tests OK. Not independently rerun.",
+  "classification": "agent_completed"
+}

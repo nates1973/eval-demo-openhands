@@ -14,9 +14,14 @@ config/*.local.*
 *.pem
 secrets/
 *.secret
+.claude/settings.json
+
 
 # Local tooling
 node_modules/
 __pycache__/
 .venv/
 .DS_Store
+
+# Deployment artifacts: VPN client configs (include the tls-auth key), ARM templates and certs
+/Deployed_Resources/

@@ -1,0 +1,176 @@
+Yes. What you’re seeing is consistent with an important split in OpenHands configuration: the Agent Canvas/provider-connection configuration and the evaluation harness configuration are not necessarily the same configuration path.
+
+The current OpenHands docs say a Provider Connection stores the provider credentials/base URL and that linked LLM profiles inherit those values from it. But the evaluation documentation explicitly says that for evaluation, only the LLM configuration is used, and shows eval-specific model definitions including model, base_url, and api_key.
+
+That makes your symptom very plausible.
+
+What I think is happening
+
+You have something like:
+
+Agent Canvas
+    |
+    +-- Provider Connection
+    |      Azure / proxy / other provider
+    |
+    +-- Model A
+    +-- Model B
+
+
+and your interactive OpenHands sessions correctly use it.
+
+But the eval path is effectively doing:
+
+evaluation runner
+      |
+      +-- LLM configuration
+              |
+              +-- model identifier
+              +-- api_key
+              +-- base_url
+
+
+rather than resolving the provider connection you created in Canvas.
+
+OpenHands' evaluation documentation specifically gives this pattern for an OpenAI-compatible endpoint:
+
+[llm.eval_some_openai_compatible_model_llm]
+model = "openai/MODEL_NAME"
+base_url = "https://OPENAI_COMPATIBLE_URL/v1"
+api_key = "XXX"
+temperature = 0.0
+
+
+The newer benchmark documentation describes essentially the same pattern with JSON: evals receive their own LLM configuration containing model, base_url, and api_key, with an optional custom_llm_provider.
+
+The big smoking gun
+
+OpenHands uses LiteLLM underneath its model abstraction. The OpenHands OpenAI documentation explicitly says OpenAI calls are made through LiteLLM and that an OpenAI-compatible endpoint should be represented by a model such as:
+
+openai/<model-name>
+
+
+plus the custom base URL.
+
+So if an eval-created LLM instance sees:
+
+model = openai/gpt-...
+
+
+but doesn't receive your provider connection'sbase_url, LiteLLM has every reason to interpret that as:
+
+OpenAI model
+        ↓
+OpenAI provider
+        ↓
+OpenAI API endpoint
+
+
+instead of:
+
+OpenAI-compatible model
+        ↓
+your configured provider connection
+        ↓
+your provider endpoint
+
+
+That would produce exactly the behavior you're describing: most of OpenHands looks correctly configured, while particular eval calls unexpectedly attempt to contact OpenAI directly.
+
+And there's another possible source
+
+Also watch for secondary LLM instances.
+
+Agentic systems frequently don't make every model request through the primary agent model. OpenHands has configuration concepts for multiple LLMs and eval-specific LLM definitions.
+
+So I would distinguish two cases in your logs:
+
+A. Main agent generation
+B. Eval / grader / auxiliary generation
+
+
+If only B goes to OpenAI, don't keep debugging the Provider Connection. The problem is almost certainly an independently instantiated LLM.
+
+If A occasionally goes to OpenAI, then I'd start looking for a fallback/default LLM configuration.
+
+What I'd check in your container
+
+Given your Azure/containerized OpenHands setup, I'd inspect the running environment first:
+
+az container exec `
+  --resource-group <your-resource-group> `
+  --name openhands-dev-container `
+  --exec-command "/bin/sh"
+
+
+Then:
+
+env | sort | grep -Ei 'OPENAI|AZURE|LLM|MODEL|LITELLM'
+
+
+Pay particular attention to:
+
+OPENAI_API_KEY
+OPENAI_BASE_URL
+LLM_MODEL
+LLM_API_KEY
+LLM_BASE_URL
+
+
+The names actually present will depend on the OpenHands version/configuration you're running, so the point here is diagnostic, not that all of those names must exist.
+
+Then inspect whatever eval configuration you're invoking.
+
+The key question is whether the eval process receives all three pieces together:
+
+model
+base_url
+api_key
+
+
+not merely:
+
+model
+
+One experiment I'd run immediately
+
+Because you're doing eval-driven analysis anyway, make this a controlled test.
+
+Set the environment so that direct OpenAI authentication cannot possibly succeed, while leaving your intended provider credentials intact.
+
+Run one tiny eval.
+
+Then capture the error.
+
+If you get something along the lines of:
+
+AuthenticationError
+openai.OpenAI
+api.openai.com
+
+
+you've demonstrated something architecturally useful:
+
+the eval execution path is constructing an LLM independently of the Canvas/provider-connection configuration.
+
+That is actually a pretty interesting finding for the brownfield EDD experiment you're preparing.
+
+Your own Internal Jump Start Innovation POD Daily Sync 2026-10-19 notes describe your experiment as applying evaluations to the existing OpenHands agentic system specifically to demonstrate regression detection and system stabilization. This configuration leak would be a great example of exactly that type of architectural discovery.
+
+My current hypothesis, ranked
+
+Eval LLM is instantiated independently and doesn't inherit the Provider Connection.
+ Strongest candidate because the OpenHands eval docs explicitly establish their own LLM configuration path.
+
+Model name is being interpreted by LiteLLM as direct OpenAI because your custom base_url isn't reaching that LLM instance.
+ Consistent with OpenHands' documented OpenAI-compatible configuration.
+
+A secondary/grader LLM is using the default [llm] configuration rather than one of your named models.
+ The eval docs explicitly support a default [llm] plus named LLM configurations, so this is worth checking.
+
+OpenHands fallback/default behavior.
+ Possible, but I wouldn't chase this until we've eliminated #1-3.
+
+I didn't find evidence in this search of a specific current OpenHands bug report saying "Provider Connections ignored by evals." What I did find is documentation showing two distinct configuration mechanisms, which is enough that I would investigate configuration propagation before assuming this is an Azure networking or credential problem.
+
+Given where you are with the experiment, I would not change the Canvas configuration yet. I would trace one failed eval call and identify exactly which LLM config instantiated it. That will tell us whether you've found a bug, an undocumented eval requirement, or simply an eval-specific configuration that needs the provider endpoint copied into it.

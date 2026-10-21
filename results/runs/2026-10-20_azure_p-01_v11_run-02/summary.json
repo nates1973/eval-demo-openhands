@@ -1,0 +1,17 @@
+{
+  "run_id": "2026-10-20_azure_p-01_v11_run-02",
+  "status": "completed",
+  "attempts": 1,
+  "passes": 1,
+  "failures": 0,
+  "blocked": 0,
+  "agent_actions": 21,
+  "cost_usd": 0.01384072,
+  "cost_note": "OpenHands-recorded only; Azure billing not independently verified.",
+  "outcome": "On gpt-5.6-luna via the Azure endpoint, the agent changed subtract to return left - right, added a negative-result regression test, and modified only the two allowed files (verified by git status/diff against fixture commit ae0da31). The agent reported 3 passing tests; this was not independently rerun. The firewall log shows only Azure OpenAI Allow entries and no Deny.",
+  "caveats": [
+    "max_iterations was 25, not the case's 6; run-01 at 6 stopped before any edit.",
+    "Test result is agent-reported.",
+    "Single run; no repeat or noise-floor estimate."
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "run_id": "2026-10-19_azure_p-01_tuesday-preflight_run-02",
+  "recorded_at": "2026-10-19T20:26:00Z",
+  "environment": "azure",
+  "condition": "baseline",
+  "status": "blocked",
+  "case_id": "P-01",
+  "fixture": {
+    "workspace": "/projects/qa-repo-tuesday-p01-v11",
+    "fixture_commit": "e59f9961171a092bf9ad272a92ea6fc2d2ac3d07",
+    "max_iterations": 6
+  },
+  "model": "openai/gpt-5.6-luna",
+  "provider_connection": {
+    "display_name": "Evals Experiment Foundry",
+    "connection_id": "<connection-id>",
+    "configured_base_url": "https://<azure-openai-host>/openai/v1",
+    "request_endpoint_observed": "https://api.openai.com/v1/responses",
+    "response_code": 401,
+    "response_error": "invalid_api_key"
+  },
+  "deployment_fingerprint": {
+    "agent_server_version": "1.54.0",
+    "build_git_sha": "1d471742ea7be017d013eaaa3080f5d28d5490cb",
+    "image_digest": "sha256:91b7a217dcbefe8c10562523b043458ed1dfaf8ba770194b319fe754cee03f23"
+  },
+  "conversation_id": "ce7ebcb6-6157-4a86-88c2-5991d7a18d0e",
+  "budget_authorization_usd": 15,
+  "provider_reported_cost_usd": 0,
+  "usage": {
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "cache_read_tokens": 0
+  },
+  "cost_usd": null,
+  "cost_note": "OpenHands recorded zero token usage and $0.00 model cost. Azure billing was not independently verified.",
+  "classification": "provider_endpoint_mismatch"
+}
