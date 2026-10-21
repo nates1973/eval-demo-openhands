@@ -19,7 +19,10 @@
   },
   "max_iterations": 25,
   "agent_actions": 5,
-  "usage": {"prompt_tokens": 39602, "completion_tokens": 1151},
+  "usage": {
+    "prompt_tokens": 39602,
+    "completion_tokens": 1151
+  },
   "cost_usd": 0.00466948,
   "cost_note": "OpenHands-recorded only; not verified against Azure billing.",
   "assertions": {
@@ -42,7 +45,15 @@
     "The final message omitted the file section header name beyond [service]; acceptable."
   ],
   "egress_evidence": {
-    "azure_openai_host_allow": "not yet queried for this run window",
-    "denied_requests": "not yet checked; earlier check showed 0"
+    "window_utc": [
+      "2026-10-21T17:58:32Z",
+      "2026-10-21T18:05:00Z"
+    ],
+    "source": "Log Analytics workspace firewall-logs, table AzureDiagnostics, Category AZFWApplicationRule; queried 2026-10-21T23:09Z (after the 5-7 minute ingestion lag).",
+    "azure_openai_host_allow": 2,
+    "denied_requests": 0,
+    "other_hosts_seen": 0,
+    "checked_at_utc": "2026-10-21T23:09:00Z",
+    "note": "Entries are per connection, not per request, so a window with few entries reflects connection reuse, not missing activity."
   }
 }

@@ -1,0 +1,43 @@
+{
+  "checked_at_utc": "2026-10-21T23:09:00Z",
+  "workspace": "firewall-logs (table AzureDiagnostics, Category AZFWApplicationRule)",
+  "data_range_utc": [
+    "2026-10-20T21:43:42Z",
+    "2026-10-21T17:58:34Z"
+  ],
+  "totals": {
+    "allow_azure_openai_host": 28,
+    "deny": 1,
+    "other": 0
+  },
+  "deny_entries": [
+    {
+      "time_utc": "2026-10-20T21:43:42Z",
+      "target": "api.openai.com",
+      "interpretation": "Inference: a routing test five seconds before the first Allow, at the time the firewall rule was created (preflight records 2026-10-20T21:43Z). It precedes every scored run (earliest v11 conversation at 22:24Z or later) and is not in any scored run window."
+    }
+  ],
+  "scored_run_windows_checked": {
+    "P-04 run-02": {
+      "window_utc": [
+        "2026-10-21T17:26:44Z",
+        "2026-10-21T17:35:00Z"
+      ],
+      "allow": 2,
+      "deny": 0
+    },
+    "P-05 v1.1 run-01": {
+      "window_utc": [
+        "2026-10-21T17:58:32Z",
+        "2026-10-21T18:05:00Z"
+      ],
+      "allow": 2,
+      "deny": 0
+    }
+  },
+  "limitations": [
+    "Log entries are per connection, not per request.",
+    "No entries exist after 17:58:34Z on 2026-10-21 at query time, which is consistent with no further runs, not with a logging gap.",
+    "The earlier runs' Deny checks were not re-verified here; the data shows no Deny entry in any of their windows."
+  ]
+}

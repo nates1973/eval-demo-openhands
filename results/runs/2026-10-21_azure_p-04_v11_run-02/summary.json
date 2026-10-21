@@ -12,7 +12,7 @@
   "caveats": [
     "Single run.",
     "Exit status comes from the agent's own terminal output; verified only indirectly by earlier independent reruns.",
-    "Firewall Deny check for this run window not yet done.",
     "Cost is OpenHands-recorded and unverified against billing."
-  ]
+  ],
+  "egress_check": "Firewall log checked after the run: 0 Deny entries in the run window; Allow entries to the Azure OpenAI host only."
 }
