@@ -1,0 +1,93 @@
+{
+  "activeActive": false,
+  "allowRemoteVnetTraffic": false,
+  "allowVirtualWanTraffic": false,
+  "bgpSettings": {
+    "asn": 0,
+    "bgpPeeringAddresses": [
+      {
+        "customBgpIpAddresses": [],
+        "defaultBgpIpAddresses": [],
+        "ipconfigurationId": "/subscriptions/57ebfaff-6dc5-476d-84b3-99a5e1297d5a/resourceGroups/brownfield-evals-experiment/providers/Microsoft.Network/virtualNetworkGateways/brownfield-evals-gateway/ipConfigurations/default"
+      }
+    ],
+    "peerWeight": 0
+  },
+  "customRoutes": {
+    "addressPrefixes": []
+  },
+  "disableIPSecReplayProtection": false,
+  "enableBgp": false,
+  "enableBgpRouteTranslationForNat": false,
+  "enableHighBandwidthVpnGateway": false,
+  "enablePrivateIpAddress": false,
+  "etag": "W/\"3289946c-e4a7-468b-bd2f-b75a45af7ead\"",
+  "gatewayType": "Vpn",
+  "id": "/subscriptions/57ebfaff-6dc5-476d-84b3-99a5e1297d5a/resourceGroups/brownfield-evals-experiment/providers/Microsoft.Network/virtualNetworkGateways/brownfield-evals-gateway",
+  "ipConfigurations": [
+    {
+      "etag": "W/\"3289946c-e4a7-468b-bd2f-b75a45af7ead\"",
+      "id": "/subscriptions/57ebfaff-6dc5-476d-84b3-99a5e1297d5a/resourceGroups/brownfield-evals-experiment/providers/Microsoft.Network/virtualNetworkGateways/brownfield-evals-gateway/ipConfigurations/default",
+      "name": "default",
+      "privateIPAllocationMethod": "Dynamic",
+      "provisioningState": "Failed",
+      "publicIPAddress": {
+        "id": "/subscriptions/57ebfaff-6dc5-476d-84b3-99a5e1297d5a/resourceGroups/brownfield-evals-experiment/providers/Microsoft.Network/publicIPAddresses/brownfield-evals-gateway-pip",
+        "resourceGroup": "brownfield-evals-experiment"
+      },
+      "resourceGroup": "brownfield-evals-experiment",
+      "subnet": {
+        "id": "/subscriptions/57ebfaff-6dc5-476d-84b3-99a5e1297d5a/resourceGroups/brownfield-evals-experiment/providers/Microsoft.Network/virtualNetworks/brownfield-evals-experiment-net/subnets/GatewaySubnet",
+        "resourceGroup": "brownfield-evals-experiment"
+      }
+    }
+  ],
+  "location": "westus",
+  "name": "brownfield-evals-gateway",
+  "natRules": [],
+  "provisioningState": "Failed",
+  "resourceGroup": "brownfield-evals-experiment",
+  "resourceGuid": "3e0805ec-6b46-46dd-aea6-d9d4a66f51cc",
+  "sku": {
+    "capacity": 2,
+    "name": "VpnGw1AZ",
+    "tier": "VpnGw1AZ"
+  },
+  "tags": {},
+  "type": "Microsoft.Network/virtualNetworkGateways",
+  "virtualNetworkGatewayMigrationStatus": {
+    "errorMessage": "",
+    "phase": "None",
+    "state": "None"
+  },
+  "virtualNetworkGatewayPolicyGroups": [],
+  "vpnClientConfiguration": {
+    "radiusServers": [],
+    "vngClientConnectionConfigurations": [],
+    "vpnAuthenticationTypes": [
+      "Certificate"
+    ],
+    "vpnClientAddressPool": {
+      "addressPrefixes": [
+        "10.1.16.0/26"
+      ]
+    },
+    "vpnClientIpsecPolicies": [],
+    "vpnClientProtocols": [
+      "OpenVPN"
+    ],
+    "vpnClientRevokedCertificates": [],
+    "vpnClientRootCertificates": [
+      {
+        "etag": "W/\"3289946c-e4a7-468b-bd2f-b75a45af7ead\"",
+        "id": "/subscriptions/57ebfaff-6dc5-476d-84b3-99a5e1297d5a/resourceGroups/brownfield-evals-experiment/providers/Microsoft.Network/virtualNetworkGateways/brownfield-evals-gateway/vpnClientRootCertificates/OpenHands-p2s-rootCA",
+        "name": "OpenHands-p2s-rootCA",
+        "provisioningState": "Failed",
+        "publicCertData": "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 w84raGuFmQ==",
+        "resourceGroup": "brownfield-evals-experiment"
+      }
+    ]
+  },
+  "vpnGatewayGeneration": "Generation2",
+  "vpnType": "RouteBased"
+}

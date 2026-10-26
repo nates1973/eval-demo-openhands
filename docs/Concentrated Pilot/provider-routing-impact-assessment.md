@@ -2,6 +2,7 @@
 
 **Assessment date:** 2026-10-19 (Tuesday work started early)
 **Plan assessed:** [concentrated-plan.md](./concentrated-plan.md)
+**Update 2026-10-26:** the Azure environment was later suspended (VPN gateway failure) and the baseline and injection ran on a local deployment; see the [final update](#update-2026-10-26-outcome-and-open-items) at the end. Earlier text is preserved.
 **Status:** Routing is controlled as of 2026-10-20 (see the update below). P-01 has a completed baseline run on `gpt-5.6-luna`. The sections after the update describe the 2026-10-19 state.
 
 ## Update 2026-10-20/21: routing controlled; P-01 baseline obtained on luna
@@ -190,3 +191,23 @@ This is where the issue matters most, because the preferred injection is a model
 - [Deployment freeze record](../../results/verification/azure-freeze-2026-10-19.json)
 - [Oracle validation](../../dataset/cases/oracle-validation-2026-10-19.json)
 - [Provider configuration notes](./provider%20configuration%20issue.txt) (general external guidance; not confirmed as the cause here)
+
+## Update 2026-10-26: outcome and open items
+
+**Outcome of this issue.** Routing was controlled on Azure from 2026-10-20 (firewall allowlist, per-run preflight) and the Wednesday cases then ran, so the Scenario A / Scenario B question above was never resolved and is now moot for the pilot: the root cause stays **unconfirmed**. The mitigation held: the firewall check recorded one Deny (`api.openai.com`, a routing test made when the rule was created, before any scored run) and no Deny in the scored run windows examined (`results/verification/azure-firewall-deny-check-2026-10-21.json`; its limitations note earlier runs were not re-verified).
+
+**Impact assessment, final status of the sections above (state as of 10-19, preserved)**
+
+| Section | What happened |
+|---|---|
+| Wednesday, runner and preflight | Done. The preflight and effective-profile read-back recommended here is built into `scripts/run_pilot.py` (it activates the profile, sets the iteration cap, reads both back, and stops if they do not match). Endpoint-host recording applies to Azure runs; local runs record the active model ID and profile instead. |
+| Thursday, baseline | Re-platformed. Not run on Azure; run locally on 10-26 because of the separate Azure gateway failure (see [Azure Environmental Impacts](./Azure%20Environmental%20Impacts.md)), not because of routing. |
+| Friday, injection | Model substitution was kept as the injection and run locally on `gpt-4.1-nano`. The routing risk described above (a substituted model silently routing elsewhere) was checked by the per-run profile read-back rather than by a firewall, because the local deployment has no Azure firewall. |
+| Success criteria 1-5 | Criteria 1-4 now have underlying runs; the verdicts are pending the scorecard. Criterion 5 (cost, friction, limitations) is covered by this document, the Azure document and the charter addenda. |
+
+**Open items from the earlier update**
+
+- Independent rerun of P-01 tests for Azure runs 02 and 03: not done; those runs stay agent-reported for tests. Local runs rerun the oracle independently.
+- Stale YAML configs in `config/`: still stale and not authoritative; the live deployment is the source of truth.
+- Reset of `max_iterations`: not applicable to the local runs, which set 25 per conversation. The Azure server-wide value of 25 was not recorded as reset; check before any reuse of the Azure instance.
+- Azure billing remains unverified; costs are OpenHands-recorded only.

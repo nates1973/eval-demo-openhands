@@ -1,5 +1,7 @@
 # Concentrated OpenHands Evals Pilot Plan
 
+> **Status as of 2026-10-26: executed, with deviations. The plan text below is preserved as written.** See [Execution status and deviations](#execution-status-and-deviations-added-2026-10-26) at the end for what was actually done each day, what changed and why. In short: Monday to Wednesday ran on Azure; the Azure VPN gateway then failed repeatedly, so Thursday's baseline and Friday's injection were run on a local OpenHands deployment on 2026-10-26, followed by a bounded framework spike.
+
 You are in a good position to run a **compressed pilot**, rather than trying to execute the entire eight-week study this week. The goal for Monday, October 26 should be credible evidence that the evaluation approach works, plus an honest account of what remains, not a finished framework bake-off.
 
 ## Recommended attack: one vertical slice
@@ -548,3 +550,41 @@ For this week, deliberately reduce the plan to:
 > **Five cases, three repeats, one injected regression, one custom harness, and one evidence-backed recommendation.**
 
 That is small enough to complete, but substantial enough to show the "meat" of Evaluation-Driven Development: frozen conditions, explicit expectations, executable evidence, repeated measurement, controlled change, and a decision based on the resulting signal.
+
+---
+
+# Execution status and deviations (added 2026-10-26)
+
+The plan above is unchanged. This section records what happened against it. Evidence tags: **[M]** measured, from files under `results/`; **[R]** reported by the owner or an agent and not independently verified.
+
+## Status by day
+
+| Plan day | Plan item | Status | Where recorded |
+|---|---|---|---|
+| Mon 10/19 | Freeze experiment, charter | Done (Azure). Charter written retrospectively for the first runs. | [charter](./experiment-charter-2026-10-19.md), `results/verification/azure-freeze-2026-10-19.json` |
+| Tue 10/20 | Five cases and fixtures with independent oracles | Done. P-05 was redesigned on 10/21 (v1.2) and a supplementary variant P-05b added. | `dataset/cases/`, [charter addendum (b)](./experiment-charter-2026-10-19.md) |
+| Wed 10/21 | Thinnest runner, one end-to-end scored run | Done in two forms: Azure runs driven by hand through Canvas and the Agent Server API (10/20-10/21), then `scripts/run_pilot.py` for local runs (10/26). | `results/runs/2026-10-2[01]_azure_*`, `scripts/run_pilot.py` |
+| Thu 10/22 | 15-run baseline and noise floor | **Moved and re-platformed.** Not run on Azure. Run locally on 10/26 on `gpt-5.6-luna`: 3 runs per case, plus one extra run per case (`run-90`) and P-05b. | `results/runs/2026-10-26_local_*_gpt-5.6-luna_*` |
+| Fri 10/23 | Inject model substitution, compare, restore | **Moved and re-platformed.** Run locally on 10/26 on `gpt-4.1-nano`: 3 runs per case and P-05b. Restoration was not a separate step locally (see below). | `results/runs/2026-10-26_local_*_gpt-4.1-nano_*` |
+| Weekend | Aggregate, traces, friction, SUT vs infrastructure | Friction and infrastructure history documented. Aggregate scorecard and trace selection are **pending**. | [Azure Environmental Impacts](./Azure%20Environmental%20Impacts.md), [provider routing assessment](./provider-routing-impact-assessment.md) |
+| Mon 10/26 | Presentation, recommendation | **Pending.** | - |
+| Added | Framework spike (Inspect AI, Promptfoo; plus pytest and DeepEval) | Executed on 10/26 against the same local runner. Write-up **pending**. | `frameworks/`, `results/frameworks/`, `results/frameworks/spike-log.txt` |
+
+## Deviations and the decisions behind them
+
+1. **Azure to local OpenHands (decided after the 2026-10-22 gateway failures).** The Azure VPN Gateway failed provisioning repeatedly (`VmssGatewayDeploymentFailed`), including on a clean gateway, which removed private access to the deployed instance. Support escalation was not available on the personal subscription. The owner moved the pilot to a local OpenHands deployment to preserve the deadline. Full record: [Azure Environmental Impacts](./Azure%20Environmental%20Impacts.md). Consequences:
+   - Monday-Wednesday evidence is from Azure (Agent Server 1.54.0). Thursday-Friday evidence is local (Agent Server 1.58.1). **Baseline and injected conditions share the local environment, so the comparison between them is like for like. The Azure runs are not part of the baseline or injected sample.**
+   - Azure-only controls (private IP, firewall egress allowlist, persistent share) do not apply to local runs. Azure topology effects are not evaluated.
+2. **Provider routing problem on Azure (10/19-10/21).** Three P-01 preflight attempts failed authentication before any agent action. Resolved by an Azure Firewall egress allowlist and a mandatory preflight read-back; the runner now reads back the active profile before every run. Root cause remained unconfirmed. See the [assessment](./provider-routing-impact-assessment.md).
+3. **P-01 iteration cap.** The case specified 6 `max_iterations`, which stopped the first run before any edit. The cap was raised to 25 and applied to every scored run in both conditions. See the charter addendum.
+4. **P-05 redesign and P-05b.** The v1.1 design never exercised the injection; v1.2 was frozen before any injected run, and P-05b was added as a supplementary variant. Runs where the agent never opened the injection file are classified `not_exercised` and excluded, which leaves several P-05 and P-05b runs without signal.
+5. **Run structure.** The plan's run folder holds `metadata.json`, `cases.jsonl`, `results.jsonl`, `summary.json` and `logs/`. Local runs hold `metadata.json`, `results.jsonl`, `summary.json` and `events.json` (raw event capture, which closes a gap listed in the charter). Case definitions are shared, not copied per run.
+6. **Restoration.** The plan's restore-and-smoke step assumed a long-lived shared deployment. Locally the profile is set by the runner before each run and read back, so no persistent change was left to restore. The final local profile state is not separately logged. If this needs to be asserted, check `/api/settings` and record it.
+7. **Extra and side runs.** `run-90` is a fourth luna run per case. `results/side-conditions/` holds two exploratory sets run outside the frozen design (`iter50`: P-01 with a 50-iteration cap, 3 runs per profile; `pytest`: P-02 and P-04 on nano via the pytest harness, 3 runs each). Neither counts toward the frozen baseline or injected samples.
+8. **Cost and duration.** OpenHands-recorded cost is captured in every local result. It is not billing-verified. Duration capture should be confirmed in the scorecard step.
+
+## Outstanding items
+
+- Baseline scorecard, injected-vs-baseline comparison against the frozen red criteria, and detected / not detected / indeterminate verdict.
+- Framework spike write-up and comparison against the custom harness.
+- Representative traces, technical and business findings, presentation, recommendation.

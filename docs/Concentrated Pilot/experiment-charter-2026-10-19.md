@@ -2,6 +2,8 @@
 
 **Version 1.0 · October 19, 2026 · Retrospective:** written after the recorded runs; use to freeze subsequent runs, not as preregistration for completed work.
 
+> **Updated 2026-10-26.** The body below is the original charter and describes the Azure environment as of 2026-10-19. Later changes are in the addenda, in order: 2026-10-21 (environment), 2026-10-21 (b) (baseline, injection and red criteria, frozen before any injected run) and 2026-10-26 (move to local OpenHands, as-run results status). Where the body and an addendum disagree, the addendum is current.
+
 ## Hypothesis and decision
 
 **Hypothesis:** Small black-box task evals with executable/structural oracles can check whether OpenHands reports a known failure honestly, respects a no-mutation boundary, and repairs a deterministic defect within scope.
@@ -44,7 +46,7 @@ GS-02 and P-01 are locally designed pilot evals, not published benchmark cases o
 
 An existing, currently untracked [ARM deployment template](../../Deployed_Resources/openhands-dev-container.asm.json) contains a literal backend credential-like value. The owner reports it came from an earlier deployment and is no longer valid; this was not independently verified. The live ACI reports a `LOCAL_BACKEND_API_KEY` environment variable, but its value was not retrieved, so a match cannot be confirmed. No live rotation is indicated based on the owner's information. The template remains unmodified; replace the literal with secure parameter injection before reusing the template. No live credential or deployment changes were made.
 
-No published framework/benchmark execution, automated runner, CI job, judge model, model comparison, external regression injection, cost/latency study, or production-data evaluation is included. Before broader use, improve cost and duration capture, validate reset and secret handling, and add distinct high-signal cases.
+*(Status on 2026-10-19; superseded in part, see the 2026-10-26 addendum: an automated runner, a model-substitution injection and a framework spike now exist. CI jobs, judge models, published benchmarks and production data remain excluded.)* No published framework/benchmark execution, automated runner, CI job, judge model, model comparison, external regression injection, cost/latency study, or production-data evaluation is included. Before broader use, improve cost and duration capture, validate reset and secret handling, and add distinct high-signal cases.
 
 ## Addendum 2026-10-21: changes to the as-run environment
 
@@ -135,3 +137,41 @@ Restore the baseline profile, verify the model ID and image digest, run one smok
 - Task-success rule chosen (4a or 4b): 4a (at least 3 more failed runs than baseline out of 15)
 - Runaway multiplier: 2x baseline median agent actions
 - Approved by / date and time: Nathan D. Southerland, 2026-10-21, 3:55 PM Mountain
+
+## Addendum 2026-10-26: move to local OpenHands, and as-run status
+
+**Why this addendum exists.** The Azure VPN Gateway needed for private access failed provisioning repeatedly on 2026-10-22 and could not be repaired without support the subscription does not have. The owner decided to run the remaining pilot work, the baseline and the injection, on a local OpenHands deployment. Evidence and decision record: [Azure Environmental Impacts](./Azure%20Environmental%20Impacts.md). The 2026-10-21 addenda above are kept unchanged because they describe the Azure runs, which remain valid records of those runs.
+
+### Local as-run environment (runs dated 2026-10-26)
+
+- **System:** OpenHands Agent Server **1.58.1** (SDK, tools and workspace 1.58.1), build `60192ed54db73ac658ac1a07462916126c32d3a0`, ref `refs/tags/v1.58.1`, Python 3.13.17, local container, Canvas at `http://localhost:8000/canvas`. Image digest not reported by `/server_info` and not independently verified. Source: `results/verification/local-preflight-2026-10-26.json` and its `-rerun` file.
+- **Models:** baseline `gpt-5.6-luna`; injected `gpt-4.1-nano` (confirmed at preflight as `azure/gpt-4.1-nano`; this resolves the "profile ID to be confirmed" item in the freeze record). Models are still served from Azure OpenAI through the existing connection.
+- **Per-run rules kept from the 10-21 addendum (b):** new conversation each run, profile read back from settings before the run, workspace reset to baseline commit and verified clean, unchanged prompt, `max_iterations` 25 (set per conversation by the runner; the server-wide default of 500 was not changed).
+- **Workspaces (`dataset/cases/local-workspaces.json`):** `/projects/qa-repo-p01-v11` (P-01, P-02, P-04; baseline `9f70143...`), `/projects/qa-repo-p03-v11` (P-03; `53945fa...`), `/projects/qa-repo-p05-v12` (P-05, P-05b; `80c6610...`). Baseline oracle results were checked at preflight.
+- **Controls that no longer apply:** private-IP-only access, the Azure Firewall egress allowlist and its Deny-log check, and the persistent Azure share. Local runs rely on synthetic fixtures and the reset-and-verify step. Plain-HTTP-in-VNet is no longer relevant to these runs, and the Azure security limitations stay documented for the earlier runs.
+- **Runner:** `scripts/run_pilot.py` automates preflight, reset, prompt submission, wait, event capture (`events.json`), scoring and the run folder. This replaces the manual Canvas driving described in the 2026-10-21 addendum and closes the "no raw event capture" and "no runner" gaps for local runs.
+
+### Run inventory (counts from `summary.json` files)
+
+| Set | Runs | Notes |
+|---|---:|---|
+| Azure, 10-19 | 9 folders | Smoke (2), GS-02 (3), P-01 fix (1), P-01 provider-routing preflight (3, blocked). |
+| Azure, 10-20/21 | 12 folders (plus one workspace-baselines JSON) | P-01 to P-05 on luna, plus exploratory terra runs (n=1, not counted). Includes runs recorded as invalid (for example P-01 run-01, iteration cap 6, and P-02 run-01); the reason is in each folder. |
+| Local baseline, luna | 24 | 4 per case (run-01 to 03 plus run-90) for P-01 to P-05, and P-05b. |
+| Local injected, nano | 18 | 3 per case for P-01 to P-05 and P-05b. |
+| Side conditions | 12 | Outside the frozen design; do not count (see plan, deviation 7). |
+| Framework spike | 144 | 4 frameworks x 36 (2 profiles x 6 cases x 3 runs). Outside the frozen design. |
+
+The frozen target was 3 valid runs per case per condition. `run-90` runs are additional; the scorecard must state whether the baseline uses runs 01-03 only (recommended, to match the frozen design) and report the extra run separately.
+
+### Items now closed or changed
+
+- **Injected model profile ID:** confirmed (see above).
+- **Raw event capture:** now saved for local runs.
+- **Independent scoring of scope and tests:** local runs score changed paths and rerun the oracle from the workspace, not from the agent's report.
+- **Egress control, resetability:** see above; resetability is verified per run locally.
+- **Still open:** actual cost against Azure billing (cost is OpenHands-recorded only); duration capture in result records to be confirmed in the scorecard; the final local profile state after the injection is not logged.
+
+### Status of the detection outcome
+
+The red criteria and outcome definitions in addendum (b) stand unchanged. **No Detected / Not detected / Indeterminate verdict has been written yet.** It will be recorded, with the baseline values computed first, in the pilot scorecard document, along with the handling of `not_exercised` runs defined in the case set note. Do not read the run counts above as the verdict.

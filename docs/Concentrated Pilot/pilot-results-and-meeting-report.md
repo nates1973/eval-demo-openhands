@@ -1,5 +1,7 @@
 # OpenHands Evaluations Pilot: Results and Meeting Brief
 
+> **Status note, 2026-10-26.** This report is a snapshot from **October 19, 2026** and its body is preserved unchanged. It covers only the first Azure runs. Statements below such as "no automated runner", "no framework-managed dataset execution" and "no controlled regression" were true on that date and are **superseded**: see [Update 2026-10-26](#update-2026-10-26-what-changed-since-this-snapshot) at the end. The final pilot results (baseline scorecard, injection verdict, framework spike) will be reported in separate documents linked from that update, not edited into this snapshot.
+
 **Prepared:** October 19, 2026  
 **Purpose:** Discuss how evaluations of AI models and agents can inform architecture, improve design, and support return-on-investment decisions.  
 **Evidence scope:** Two operational smoke attempts, three GS-02 no-mutation runs, and one isolated P-01 fix-task run, all against synthetic repositories or a workspace-free smoke prompt.
@@ -195,3 +197,28 @@ Do not claim savings from the current runs: actual spend and human time were not
 - [P-01 fix-task run](../../results/runs/2026-10-19_azure_p-01_fix-task_run-01/summary.json) · [detailed result](../../results/runs/2026-10-19_azure_p-01_fix-task_run-01/results.jsonl)
 - [Experiment charter](./experiment-charter-2026-10-19.md)
 - [Concentrated pilot plan](./concentrated-plan.md)
+
+## Update 2026-10-26: what changed since this snapshot
+
+Evidence tags: **[M]** measured from files under `results/`; **[R]** reported, not independently verified.
+
+**Superseded statements from the body**
+
+| Body statement (Oct 19) | Current state |
+|---|---|
+| "No automated runner, CI job" and results kept in hand-maintained JSON | `scripts/run_pilot.py` automates preflight, reset, run, event capture, scoring and the run folder for local runs. There is still no CI job and no judge model. |
+| "One synthetic fixture and one model profile"; three GS-02 repeats and one P-01 run | Five cases (P-01 to P-05) plus variant P-05b, two model profiles (`gpt-5.6-luna`, `gpt-4.1-nano`) and repeated runs. |
+| Actual model spend not visible; cost not captured | OpenHands-recorded cost is captured for every local run [M]. It is not billing-verified. Each run in the local set cost well under the $2 per-run abort limit [M]. |
+| Next step: add a controlled regression run | Done: model substitution to `gpt-4.1-nano` was run locally. The verdict is pending the scorecard. |
+| Remote Git status/diff and test results are agent-reported | Partly closed. Azure runs from 10-20 check scope with git status/diff in the workspace, but their test results stay agent-reported unless rerun. Local runs score scope and rerun the oracle independently of the agent's report. Earlier GS-02/P-01 records keep their original caveats. |
+
+**What happened after Oct 19 (summary; details in the linked records)**
+
+1. **Oct 19-21, Azure:** provider-routing authentication failures blocked P-01 until an egress firewall and per-run preflight were added; P-01 to P-05 then ran on `gpt-5.6-luna`, with exploratory `gpt-5.6-terra` runs at n=1. See [provider-routing assessment](./provider-routing-impact-assessment.md) and the [charter addenda](./experiment-charter-2026-10-19.md).
+2. **Oct 22, Azure:** the VPN gateway failed to provision repeatedly, so the Azure instance became unreachable for evaluation. See [Azure Environmental Impacts](./Azure%20Environmental%20Impacts.md). This is infrastructure friction, not an OpenHands finding.
+3. **Oct 26, local:** the baseline (luna) and the injected condition (`gpt-4.1-nano`) were run on a local OpenHands Agent Server 1.58.1, then four frameworks were exercised against the same runner. Environment record: charter addendum 2026-10-26.
+4. **Preliminary pattern (not a verdict) [M]:** in the local `summary.json` files every valid `gpt-5.6-luna` run passed, while `gpt-4.1-nano` failed most scored runs, including one P-01 run that hit the iteration cap, and did not open the injection file in any of its three P-05 runs (`not_exercised`). These counts have not yet been checked against the frozen red criteria or the invalid and `not_exercised` rules; the baseline scorecard will do that.
+
+**Not changed:** the limits in the body still apply to the earlier runs. All results are from a synthetic pilot benchmark, with small samples and no ROI, production or general model-quality claim. Azure and local runs use different Agent Server versions (1.54.0 vs 1.58.1) and must not be pooled.
+
+**Recommended next steps from the body, current status:** (1) P-01 diff inspection, closed for scope in later runs; (2) GS-02 fixture preserved, unverified in this update; (3) cost and duration capture, cost now captured, duration to be confirmed; (4) further cases, done to P-05/P-05b; (5) controlled regression, run, verdict pending; (6) deployment security, unchanged and moot for local runs but still required before any Azure or sensitive-code use.

@@ -1,5 +1,7 @@
 # How the Concentrated Pilot Relates to Evals
 
+> **Updated 2026-10-26.** Written on 2026-10-21 when the pilot was still manual. The text below is preserved as the original framing; the [Update 2026-10-26](#update-2026-10-26-status-of-the-runner-injection-and-framework-spike) section at the end records what became of each gap and plan item.
+
 **Date:** 2026-10-21 · **Status:** Framing for the team. Framework statements are general knowledge and **not verified against current documentation**; verify before relying on them.
 
 ## What this pilot is
@@ -53,3 +55,24 @@ Not covered: LLM-as-judge grading, repeated-trial statistics, multi-turn user si
 ## How to present it
 
 "We ran a custom, state-based agent eval with controlled fixtures and programmatic oracles, and used it to detect an injected change. A framework would automate the runner, logging and repeat runs; we are testing whether one can wrap the same cases." Do not claim the manual pilot is framework-based, benchmarked, or statistically meaningful.
+
+## Update 2026-10-26: status of the runner, injection and framework spike
+
+**Gaps table, current status**
+
+| Gap (10-21) | Status on 10-26 |
+|---|---|
+| `assertions` are labels only; no code reads them | Closed for local runs: `scripts/run_pilot.py` evaluates the assertions in code. |
+| No runner | Closed: the runner drives the Agent Server API, bypassing Canvas. This is a different launch path from the earlier manual Azure runs. |
+| No raw event capture saved | Closed for local runs (`events.json` per run). |
+| Single run per case and model | Closed for the local sets: 3 planned runs per case per model (plus one extra luna run per case), still a pilot sample, not a confidence interval. |
+| Agent-reported test results in some runs | Closed for local runs, where the oracle is rerun from the workspace. Open for the earlier Azure runs. |
+
+**Plan items, current status**
+
+- **Regression detection (planned Friday test):** run on 2026-10-26 on a local deployment by substituting `gpt-4.1-nano` for `gpt-5.6-luna`. The verdict against the frozen red criteria is pending the scorecard.
+- **Environment change:** the Azure instance became unreachable on 10-22, so the baseline and injection ran locally. Mapping table rows referring to Azure, `/project/...` and the firewall describe the Azure runs only. See the [charter addendum](./experiment-charter-2026-10-19.md) and [Azure Environmental Impacts](./Azure%20Environmental%20Impacts.md).
+- **Framework spike (plan item 2):** executed on 2026-10-26. The original plan was Inspect AI first, starting with P-02, with Promptfoo optional. As run, the spike covered **Inspect AI, Promptfoo, pytest and DeepEval**, all six cases, both models and three runs each, through a shared adapter (`frameworks/common.py`) that reuses the runner's scorers, so differences come from the framework layer. RAGAS was not run (`frameworks/ragas/` is empty). The expansion beyond the original scope was an owner decision on the day. Results are in `results/frameworks/`; the comparison write-up is pending.
+- **Framework documentation check:** the "before the spike" step (verify current docs, record versions) is only partly recorded: Promptfoo ran as `promptfoo@0.125.1` (from the spike script). Versions of the other frameworks are not yet recorded and should be captured from the spike virtual environment.
+
+**Still valid:** the caution that framework statements above are general knowledge, not verified against current documentation, and the presentation guidance. The final claim to avoid remains "framework-based or statistically meaningful": the spike wrapped the same custom cases and scorers rather than replacing them.

@@ -5,3 +5,7 @@ The five pilot cases use three small synthetic fixtures. Their canonical source 
 Run each test command from the fixture root. Case-specific expected outcomes are in `dataset/cases/expected-results/`. P-02 and P-04 intentionally share the failing-test fixture; reset it independently before each case.
 
 Do not put real secrets or user data in these fixtures. The P-05 canary is synthetic.
+
+## Local runs (2026-10-26)
+
+The local OpenHands runs use separate workspaces that are their own git repositories, each with a baseline commit recorded in `dataset/cases/local-workspaces.json` (`/projects/qa-repo-p01-v11`, `/projects/qa-repo-p03-v11`, `/projects/qa-repo-p05-v12`). `scripts/run_pilot.py` resets each workspace to its baseline commit and verifies it is clean before every run, so the snapshot-based `reset_command` above is not used for those runs. The fixture contents are the same synthetic repositories (P-05 is the v1.2 design).

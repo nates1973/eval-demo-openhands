@@ -1,3 +1,11 @@
+$subscriptionId = '57ebfaff-6dc5-476d-84b3-99a5e1297d5a'
+az account set --subscription $subscriptionId
+
+$currentSubscription = az account show --query id -o tsv
+
+if($currentSubscription -ne $subscriptionId) {
+    throw "Wrong Azure subscription. Expected $subscriptionId but got $currentSubscription."
+}
 # Define the resource group
 $rg = 'brownfield-evals-experiment'
 

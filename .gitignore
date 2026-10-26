@@ -1,6 +1,10 @@
 # Borrowed upstream code: a separate repo with its own history, never committed here.
 /OpenHands/
 
+# Framework spike tooling (recreate with the install steps in frameworks/README)
+.venv-frameworks/
+node_modules/
+
 # Raw session and run logs may contain API keys, tokens and Azure endpoints.
 # Commit only scrubbed logs (results/runs/**/logs/scrubbed/) and aggregates.
 results/runs/**/logs/raw/

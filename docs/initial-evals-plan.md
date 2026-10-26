@@ -5,6 +5,8 @@
 **Status:** Draft for review. Framework characteristics in section 5 come from general knowledge and have not been checked against current docs. Phase 0 verifies them.
 **Revision (2026-10-16):** The study no longer depends on building or modifying OpenHands. Stage 1 is fully black-box against the deployed instance and changes only what is reachable from outside (model, settings, released image version). Work that needs source changes and redeployment moves to an optional Stage 2, behind a decision gate (section 7.1). Sections affected: 1, 1.1, 4.2, 4.3, 4.6, 4.7, 6, 7, 8 and 9.
 
+**Pilot execution note (2026-10-26):** a one-week concentrated pilot ([plan](./Concentrated%20Pilot/concentrated-plan.md), [charter](./Concentrated%20Pilot/experiment-charter-2026-10-19.md)) exercised a slice of this plan: five cases plus one variant, a custom runner, one Stage 1 injection (model substitution) and a bounded framework spike. It did not follow the eight-week schedule in section 7. Decisions that changed the plan as written: Azure was suspended after VPN gateway failures and the baseline and injection ran on a local OpenHands deployment (see [Azure Environmental Impacts](./Concentrated%20Pilot/Azure%20Environmental%20Impacts.md)); the baseline used 3 runs per case, not the k=5 proposed here; the framework spike covered Inspect AI, Promptfoo, pytest and DeepEval but not RAGAS. This document is otherwise unchanged and remains the full-study design.
+
 ## Executive summary
 
 This plan runs three connected workstreams on one codebase.

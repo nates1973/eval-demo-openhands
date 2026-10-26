@@ -19,7 +19,12 @@
       "Bash(grep -n -o -E \".{40}<\\(azure-openai-host|connection-id|private-ip\\)>.{20}\" \"docs/Concentrated Pilot/experiment-charter-2026-10-19.md\")",
       "Bash(xargs -d '\\\\n' grep -I -l -E \"openai\\\\.azure\\\\.com|\\\\b[0-9a-f]{32}\\\\b\")",
       "Bash(grep -rn \"PENDING_\" dataset docs)",
-      "Bash(sed -E 's/[0-9a-f]{8}-[0-9a-f-]{27}/<GUID>/')"
+      "Bash(sed -E 's/[0-9a-f]{8}-[0-9a-f-]{27}/<GUID>/')",
+      "Bash(wc -l docs/*.md \"docs/Concentrated Pilot\"/*)",
+      "Bash(grep -n -iE \"\\\\[ \\\\]|\\\\[x\\\\]|todo|tbd|pending|not yet|outstanding|remaining|spike\" docs/*.md \"docs/Concentrated Pilot\"/*.md)",
+      "Bash(cat \"docs/Concentrated Pilot/evals-framing.md\")",
+      "Bash(grep -n -iE \"10-2[2-6]|October 2[2-6]|detected|restor|scorecard|local|nano|shut ?down\" docs/*.md \"docs/Concentrated Pilot\"/*.md)",
+      "Bash(sed -n 236,262p scripts/run_pilot.py)"
     ]
   }
 }

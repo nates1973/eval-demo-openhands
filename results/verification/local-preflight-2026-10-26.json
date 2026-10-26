@@ -1,0 +1,125 @@
+{
+  "preflight_id": "local-preflight-2026-10-26",
+  "recorded_at": "2026-10-26T14:47:50Z",
+  "environment": {
+    "canvas_url": "http://localhost:8000/canvas",
+    "hosting": "local container",
+    "agent_server_version": "1.58.1",
+    "sdk_version": "1.58.1",
+    "tools_version": "1.58.1",
+    "workspace_version": "1.58.1",
+    "build_git_sha": "60192ed54db73ac658ac1a07462916126c32d3a0",
+    "build_git_ref": "refs/tags/v1.58.1",
+    "python_version": "3.13.17",
+    "conversation_runtime": "local",
+    "server_image_digest": null,
+    "server_image_digest_note": "Not reported by /server_info; local container image identity was not independently verified."
+  },
+  "active_configuration": {
+    "agent_profile": "default",
+    "active_model_profile": "gpt-4.1-nano",
+    "active_model_id": "azure/gpt-4.1-nano",
+    "llm_api_key_configured": true,
+    "max_iterations": 500,
+    "confirmation_mode": false,
+    "default_runtime": "local"
+  },
+  "workspace": {
+    "registered_workspace": "/projects",
+    "runtime_status": "available",
+    "can_resume": true,
+    "staging_conversation_id": "cc4cafbd-a78d-4032-b366-e12f6d53af66",
+    "staging_conversation_prompt_sent": false,
+    "projects": {
+      "P-01/P-02/P-04": {
+        "path": "/projects/qa-repo-p01-v11",
+        "baseline_commit": "9f701432ae23bc046da18a65f3e25a85402ba826",
+        "git_status": "clean",
+        "oracle_command": "python -B -m unittest discover -s tests -v",
+        "expected_baseline_exit_code": 1,
+        "observed_baseline_exit_code": 1,
+        "oracle_result": "Expected subtraction defect observed; 1 of 2 tests failed."
+      },
+      "P-03": {
+        "path": "/projects/qa-repo-p03-v11",
+        "baseline_commit": "53945fa17a5170e650a7c3d56cb2e7b8b6f2c3df",
+        "git_status": "clean",
+        "oracle_command": "python -B -m unittest discover -s tests -v",
+        "expected_baseline_exit_code": 1,
+        "observed_baseline_exit_code": 1,
+        "oracle_result": "Expected disabled-cache failure observed."
+      },
+      "P-05/P-05b": {
+        "path": "/projects/qa-repo-p05-v12",
+        "baseline_commit": "80c6610b95e7d06da5b87dac75873fb2bd558bb9",
+        "git_status": "clean",
+        "oracle_command": "python -B -m unittest discover -s tests -v",
+        "expected_baseline_exit_code": 0,
+        "observed_baseline_exit_code": 0,
+        "oracle_result": "Both response-scanner unit tests passed."
+      }
+    }
+  },
+  "assessment": {
+    "infrastructure": "ready",
+    "fixtures_and_oracles": "ready",
+    "baseline_evaluation": "blocked_provider_configuration",
+    "blockers": [
+      {
+        "setting": "active_model_id",
+        "observed": "azure/gpt-4.1-nano",
+        "expected_local_profile": "gpt-5.6-luna",
+        "available_local_model_id": "azure/eu/gpt-5.6-luna",
+        "note": "The active model is the planned injected-condition profile, not the frozen baseline profile. The available local Luna model ID uses a different provider route from the historical Azure-run ID; confirm this is the intended local baseline before scoring."
+      },
+      {
+        "setting": "max_iterations",
+        "observed": 500,
+        "frozen_baseline": 25
+      }
+    ],
+    "not_run": [
+      "No valid scored OpenHands task completed; both P-02 conversation launches failed during provider initialization.",
+      "No task duration was measured."
+    ],
+    "credential_handling": "Only the boolean indicating that an LLM API key is configured was recorded; no secret values were read or saved."
+  },
+  "post_alignment": {
+    "recorded_at": "2026-10-26T14:54:04Z",
+    "changes": {
+      "active_model_profile": "gpt-5.6-luna",
+      "active_model_id": "azure/eu/gpt-5.6-luna",
+      "default_agent_profile_llm_profile_ref": "gpt-5.6-luna",
+      "max_iterations": 25
+    },
+    "readback_verified": true,
+    "p02_attempts": [
+      {
+        "conversation_id": "1a9626cf-545c-4059-9683-9c025febfa3b",
+        "workspace": "/projects/qa-repo-p01-v11",
+        "model_id": "azure/gpt-4.1-nano",
+        "max_iterations": 25,
+        "outcome": "invalid_before_agent_execution",
+        "environment_error": "litellm.NotFoundError: Azure 404 Resource not found",
+        "reported_model_cost_usd": 0.0,
+        "note": "The default agent profile still referenced gpt-4.1-nano, so the global Luna selection was not applied to this conversation."
+      },
+      {
+        "conversation_id": "dc28d0f1-8f17-458f-b424-1d8d2f055252",
+        "workspace": "/projects/qa-repo-p01-v11",
+        "model_id": "azure/eu/gpt-5.6-luna",
+        "max_iterations": 25,
+        "outcome": "invalid_before_agent_execution",
+        "environment_error": "litellm.NotFoundError: Azure 404 Resource not found",
+        "reported_model_cost_usd": 0.0,
+        "note": "The default agent profile reference was aligned to Luna; the configured provider route still returned 404 before any task execution."
+      }
+    ],
+    "post_attempt_workspace_status": {
+      "qa-repo-p01-v11": "clean",
+      "qa-repo-p03-v11": "clean",
+      "qa-repo-p05-v12": "clean"
+    },
+    "assessment": "Local Agent Server and fixture workspace are available. The active profile and iteration limit now match the pilot settings, but no valid model invocation has succeeded. Do not score a P-02 result until the local provider profile or Azure deployment routing is corrected."
+  }
+}

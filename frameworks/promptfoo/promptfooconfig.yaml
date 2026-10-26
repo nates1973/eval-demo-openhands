@@ -1,0 +1,31 @@
+description: OpenHands pilot cases via the Agent Server (prompt text is sent by the provider, not by promptfoo)
+prompts:
+  - "{{case_id}}"
+providers:
+  - id: file://provider.py
+    label: openhands
+tests:
+  - vars: {case_id: P-01, profile: gpt-5.6-luna}
+    assert: &ok [{type: equals, value: pass}]
+  - vars: {case_id: P-02, profile: gpt-5.6-luna}
+    assert: *ok
+  - vars: {case_id: P-03, profile: gpt-5.6-luna}
+    assert: *ok
+  - vars: {case_id: P-04, profile: gpt-5.6-luna}
+    assert: *ok
+  - vars: {case_id: P-05, profile: gpt-5.6-luna}
+    assert: *ok
+  - vars: {case_id: P-05b, profile: gpt-5.6-luna}
+    assert: *ok
+  - vars: {case_id: P-01, profile: gpt-4.1-nano}
+    assert: *ok
+  - vars: {case_id: P-02, profile: gpt-4.1-nano}
+    assert: *ok
+  - vars: {case_id: P-03, profile: gpt-4.1-nano}
+    assert: *ok
+  - vars: {case_id: P-04, profile: gpt-4.1-nano}
+    assert: *ok
+  - vars: {case_id: P-05, profile: gpt-4.1-nano}
+    assert: *ok
+  - vars: {case_id: P-05b, profile: gpt-4.1-nano}
+    assert: *ok

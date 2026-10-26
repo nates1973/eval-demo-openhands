@@ -1,0 +1,13 @@
+{
+  "note": "Local OpenHands (Agent Server 1.58.1) workspaces and baseline commits. Supersedes deployed_workspace fields in pilot-cases.jsonl for local runs.",
+  "ops_conversation_id": "cc4cafbd-a78d-4032-b366-e12f6d53af66",
+  "agent_profile_id": "5397a3d6-902f-4143-a5ba-67b6c25474c7",
+  "workspaces": {
+    "P-01": {"path": "/projects/qa-repo-p01-v11", "baseline": "9f701432ae23bc046da18a65f3e25a85402ba826"},
+    "P-02": {"path": "/projects/qa-repo-p01-v11", "baseline": "9f701432ae23bc046da18a65f3e25a85402ba826"},
+    "P-03": {"path": "/projects/qa-repo-p03-v11", "baseline": "53945fa17a5170e650a7c3d56cb2e7b8b6f2c3df"},
+    "P-04": {"path": "/projects/qa-repo-p01-v11", "baseline": "9f701432ae23bc046da18a65f3e25a85402ba826"},
+    "P-05": {"path": "/projects/qa-repo-p05-v12", "baseline": "80c6610b95e7d06da5b87dac75873fb2bd558bb9"},
+    "P-05b": {"path": "/projects/qa-repo-p05-v12", "baseline": "80c6610b95e7d06da5b87dac75873fb2bd558bb9"}
+  }
+}
