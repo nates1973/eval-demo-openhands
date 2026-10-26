@@ -203,7 +203,7 @@ This is where the issue matters most, because the preferred injection is a model
 | Wednesday, runner and preflight | Done. The preflight and effective-profile read-back recommended here is built into `scripts/run_pilot.py` (it activates the profile, sets the iteration cap, reads both back, and stops if they do not match). Endpoint-host recording applies to Azure runs; local runs record the active model ID and profile instead. |
 | Thursday, baseline | Re-platformed. Not run on Azure; run locally on 10-26 because of the separate Azure gateway failure (see [Azure Environmental Impacts](./Azure%20Environmental%20Impacts.md)), not because of routing. |
 | Friday, injection | Model substitution was kept as the injection and run locally on `gpt-4.1-nano`. The routing risk described above (a substituted model silently routing elsewhere) was checked by the per-run profile read-back rather than by a firewall, because the local deployment has no Azure firewall. |
-| Success criteria 1-5 | Criteria 1-4 now have underlying runs; the verdicts are pending the scorecard. Criterion 5 (cost, friction, limitations) is covered by this document, the Azure document and the charter addenda. |
+| Success criteria 1-5 | Criteria 1-4 now have underlying runs; the verdict (**Detected**) is in [pilot-scorecard-and-verdict.md](./pilot-scorecard-and-verdict.md). Criterion 5 (cost, friction, limitations) is covered by this document, the Azure document and the charter addenda. |
 
 **Open items from the earlier update**
 

@@ -24,7 +24,21 @@
       "Bash(grep -n -iE \"\\\\[ \\\\]|\\\\[x\\\\]|todo|tbd|pending|not yet|outstanding|remaining|spike\" docs/*.md \"docs/Concentrated Pilot\"/*.md)",
       "Bash(cat \"docs/Concentrated Pilot/evals-framing.md\")",
       "Bash(grep -n -iE \"10-2[2-6]|October 2[2-6]|detected|restor|scorecard|local|nano|shut ?down\" docs/*.md \"docs/Concentrated Pilot\"/*.md)",
-      "Bash(sed -n 236,262p scripts/run_pilot.py)"
+      "Bash(sed -n 236,262p scripts/run_pilot.py)",
+      "Bash(cat dataset/cases/expected-results/P-03.json)",
+      "Bash(grep -n \"only_allowed_paths\\\\|pycache\\\\|bytecode\\\\|CRLF\" scripts/run_pilot.py)",
+      "Bash(sed -n 160,236p scripts/run_pilot.py)",
+      "Bash(wc -l frameworks/common.py frameworks/pytest_harness/test_pilot.py frameworks/deepeval_spike/test_pilot_deepeval.py frameworks/inspect-ai/pilot_task.py frameworks/promptfoo/provider.py frameworks/promptfoo/promptfooconfig.yaml scripts/run_pilot.py)",
+      "Bash(cat frameworks/inspect-ai/pilot_task.py)",
+      "Bash(cat frameworks/promptfoo/promptfooconfig.yaml)",
+      "Bash(cat frameworks/deepeval_spike/test_pilot_deepeval.py)",
+      "Bash(sed -n 40,120p frameworks/common.py)",
+      "Bash(sed -n 428,481p docs/initial-evals-plan.md)",
+      "Bash(ls docs *)",
+      "Bash(cat README.md)",
+      "Bash(grep -n \"pending\" \"docs/Concentrated Pilot/Azure Environmental Impacts.md\")",
+      "Bash(awk '{print $6,$7,$9}')",
+      "Bash(grep -n \"11 failed\\\\|1/15\\\\|1 of 15\\\\|11 of 12\" pilot-scorecard-and-verdict.md)"
     ]
   }
 }

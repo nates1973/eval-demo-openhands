@@ -581,10 +581,23 @@ The plan above is unchanged. This section records what happened against it. Evid
 5. **Run structure.** The plan's run folder holds `metadata.json`, `cases.jsonl`, `results.jsonl`, `summary.json` and `logs/`. Local runs hold `metadata.json`, `results.jsonl`, `summary.json` and `events.json` (raw event capture, which closes a gap listed in the charter). Case definitions are shared, not copied per run.
 6. **Restoration.** The plan's restore-and-smoke step assumed a long-lived shared deployment. Locally the profile is set by the runner before each run and read back, so no persistent change was left to restore. The final local profile state is not separately logged. If this needs to be asserted, check `/api/settings` and record it.
 7. **Extra and side runs.** `run-90` is a fourth luna run per case. `results/side-conditions/` holds two exploratory sets run outside the frozen design (`iter50`: P-01 with a 50-iteration cap, 3 runs per profile; `pytest`: P-02 and P-04 on nano via the pytest harness, 3 runs each). Neither counts toward the frozen baseline or injected samples.
-8. **Cost and duration.** OpenHands-recorded cost is captured in every local result. It is not billing-verified. Duration capture should be confirmed in the scorecard step.
+8. **Cost and duration.** OpenHands-recorded cost is captured in every local result (not billing-verified). Run duration is captured as `duration_s` in each run's `metadata.json`, not in `results.jsonl`.
 
 ## Outstanding items
 
 - Baseline scorecard, injected-vs-baseline comparison against the frozen red criteria, and detected / not detected / indeterminate verdict.
 - Framework spike write-up and comparison against the custom harness.
 - Representative traces, technical and business findings, presentation, recommendation.
+
+## Closing update (2026-10-26, later the same day)
+
+The outstanding items above have been written up. The pilot's evidence base and documents are indexed in [README.md](./README.md).
+
+| Item | Document |
+|---|---|
+| Baseline scorecard, comparison to the frozen red criteria, verdict (**Detected**) | [pilot-scorecard-and-verdict.md](./pilot-scorecard-and-verdict.md) |
+| Framework spike comparison | [framework-spike-comparison.md](./framework-spike-comparison.md) |
+| Technical and business findings | [pilot-findings.md](./pilot-findings.md) |
+| Recommendation (**Continue**, proposed; revised from an earlier "Refine, then continue" draft, see section 1.1) and 7-slide outline | [pilot-recommendation-and-presentation-outline.md](./pilot-recommendation-and-presentation-outline.md) |
+
+Still pending: the presentation itself, the owner's decision on the recommendation, and the open items listed in the scorecard (section 8) and recommendation (section 1.6). The status table above is left as written at the time; where it says "pending", read the table here.

@@ -5,6 +5,8 @@ A private practice study of applying evals to a brownfield AI project. The study
 
 Start with [docs/initial-evals-plan.md](docs/initial-evals-plan.md).
 
+The one-week concentrated pilot (executed 2026-10-19 to 2026-10-26) is indexed at [docs/Concentrated Pilot/README.md](<docs/Concentrated Pilot/README.md>), with its results, findings, framework spike comparison and recommendation.
+
 | Folder | Contents |
 |---|---|
 | `docs/` | Assessment report, plan, and the playbook (time log, friction log, final report) |
